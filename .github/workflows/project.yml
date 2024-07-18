@@ -1,0 +1,26 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build Docker Image
+      run: sudo docker build -t my_chess_engine .
+
+    - name: Run Container
+      run: sudo docker run --name chess_engine_instance -d my_chess_engine
+
+    - name: Execute Tests
+      run: sudo docker exec chess_engine_instance /usr/src/app/tests/EngineStarterTest/EngineStarterTest
+
+    - name: Check if Container is Running
+      run: sudo docker ps | grep chess_engine_instance
