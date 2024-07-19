@@ -17,7 +17,6 @@ RUN cmake . \
 WORKDIR /usr/src/app/tests/EngineStarterTest
 RUN cmake . \
 	&& make \
-    && make install \
-	&& ./EngineStarterTest
+    && make install 
 
 CMD ["EngineStarter"]

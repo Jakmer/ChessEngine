@@ -15,7 +15,6 @@ protected:
 TEST_F(EngineStarterTest, SampleTest)
 {
     ASSERT_EQ(2 + 2, 4);
-    ASSERT_EQ(2 + 2, 5);
 }
 
 // Main function to run the tests
