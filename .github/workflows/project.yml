@@ -14,13 +14,15 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Build Docker Image
-      run: sudo docker build -t my_chess_engine .
+      run: docker build -t my_chess_engine .
 
+    # tail -f /dev/null is used to keep the container running
     - name: Run Container
-      run: sudo docker run --name chess_engine_instance -d my_chess_engine
+      run: docker run --name chess_engine_instance -d my_chess_engine tail -f /dev/null
 
     - name: Execute Tests
-      run: sudo docker exec chess_engine_instance /usr/src/app/tests/EngineStarterTest/EngineStarterTest
+      run: docker exec chess_engine_instance /usr/src/app/tests/EngineStarterTest/EngineStarterTest
+    
+    - name: Cleanup
+      run: docker rm -f chess_engine_instance
 
-    - name: Check if Container is Running
-      run: sudo docker ps | grep chess_engine_instance

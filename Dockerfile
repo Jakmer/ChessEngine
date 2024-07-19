@@ -20,4 +20,4 @@ RUN cmake . \
     && make install \
 	&& ./EngineStarterTest
 
-CMD ["./ChessEngineStarter"]
+CMD ["EngineStarter"]
