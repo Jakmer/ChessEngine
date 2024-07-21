@@ -8,5 +8,8 @@ add_library(EngineServer SHARED EngineServer.cpp EngineServer.hpp)
 # include directories
 target_include_directories(EngineServer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+# link libraries
+target_link_libraries(EngineServer PUBLIC Session)
+
 # Install library
 install(TARGETS EngineServer DESTINATION lib)

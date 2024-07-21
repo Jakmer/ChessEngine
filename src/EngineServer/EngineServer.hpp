@@ -3,6 +3,8 @@
 
 #include <spdlog/spdlog.h>
 #include <boost/asio.hpp>
+#include <vector>
+#include "Session.hpp"
 
 namespace EngineServer
 {

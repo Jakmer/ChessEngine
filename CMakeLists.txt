@@ -14,6 +14,11 @@ add_subdirectory(src/EngineStarter)
 add_subdirectory(src/EngineServer)
 add_subdirectory(src/Client)
 add_subdirectory(src/ClientStarter)
+add_subdirectory(src/Session)
+add_subdirectory(src/Message)
+add_subdirectory(src/MessageHandler)
+add_subdirectory(src/Game)
+add_subdirectory(src/User)
 
 # Add tests subdirectories
 add_subdirectory(tests/EngineStarterTest)

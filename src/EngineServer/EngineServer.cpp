@@ -40,13 +40,11 @@ namespace EngineServer
     void EngineServer::handleConnection(boost::asio::ip::tcp::socket socket)
     {
         spdlog::info("EngineServer: Connection accepted");
-        std::string message = "Hello from EngineServer\n";
-        boost::system::error_code ec;
-        boost::asio::write(socket, boost::asio::buffer(message), ec);
-        if (ec)
-        {
-            spdlog::error("EngineServer: Error sending message: {}", ec.message());
-        }
+        
+        auto session = std::make_shared<Session::Session>(std::move(socket));
+        session->start();
+
+        spdlog::info("EngineServer: Connection closed");
     }
 
 }

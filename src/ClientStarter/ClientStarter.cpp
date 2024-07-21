@@ -11,7 +11,7 @@ int main()
     try
     {
         // Create a client instance
-        Client client(host, port);
+        Client::Client client(host, port);
 
         // Connect to the server
         client.connect();
