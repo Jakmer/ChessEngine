@@ -19,3 +19,7 @@ Start
 Remove container
 
     sudo docker rm chess_engine_instance
+
+Bash mode
+
+    sudo docker run -it --name chess_engine_instance_debug my_chess_engine bash

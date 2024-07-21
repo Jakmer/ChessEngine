@@ -12,6 +12,8 @@ set(CMAKE_INSTALL_PREFIX /usr/local)
 # Add src subdirectories
 add_subdirectory(src/EngineStarter)
 add_subdirectory(src/EngineServer)
+add_subdirectory(src/Client)
+add_subdirectory(src/ClientStarter)
 
 # Add tests subdirectories
 add_subdirectory(tests/EngineStarterTest)

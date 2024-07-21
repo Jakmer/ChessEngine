@@ -1,27 +1,30 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
+#include <boost/asio.hpp>
 #include "EngineServer.hpp"
 
-int main() {
+int main()
+{
 
 	spdlog::set_level(spdlog::level::info);
-	spdlog::info("EngineStarter: Engine initialization started");
+	spdlog::info("EngineStarter: Engine initialization ...");
+
+	boost::asio::io_context ioContext;
+	short port = 8080;
 
 	try
 	{
-		EngineServer::EngineServer engineServer;
+		EngineServer::EngineServer engineServer(ioContext, port);
 		engineServer.Start();
-		spdlog::info("EngineStarter: Engine started");
 
 		// Server runs until get isRunning flag is set to false
 
-		engineServer.Stop();
 		spdlog::info("EngineStarter: Engine stopped");
 	}
-	catch(const std::exception& e)
+	catch (const std::exception &e)
 	{
 		spdlog::error("EngineStarter exception: {}", e.what());
 	}
-	
+
 	return 0;
 }
