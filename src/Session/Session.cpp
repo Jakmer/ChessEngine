@@ -2,7 +2,7 @@
 
 namespace Session
 {
-    Session::Session(boost::asio::ip::tcp::socket &&socket): socket(std::move(socket)), isActive(true)
+    Session::Session(boost::asio::ip::tcp::socket &&socket) : socket(std::move(socket)), isActive(true)
     {
         try
         {
@@ -33,16 +33,18 @@ namespace Session
         {
             spdlog::info("Session: Session started");
 
-            writeMessage(); // Server hello message
+            std::string message = "Hello from server\n";
+            auto msg = Message::Message(message);
+            writeMessage(msg); // Server hello message
 
-            isActive = false;   // for testing purposes
-            
+            isActive = false; // for testing purposes
+
             while (isActive)
             {
                 // TODO: implement timeout for readMessage
                 auto msg = readMessage();
-                //auto response =messageHandler.handleMessage(msg);
-                //writeMessage(response);                   
+                // auto response =messageHandler.handleMessage(msg);
+                // writeMessage(response);
             }
         }
         catch (const std::exception &e)
@@ -55,7 +57,17 @@ namespace Session
     {
         try
         {
-            
+            boost::asio::streambuf receive_buffer;
+            boost::asio::read_until(socket, receive_buffer, '\n'); 
+
+            std::istream input(&receive_buffer);
+            std::string message;
+            std::getline(input, message);
+            auto msg = Message::Message(message);
+
+            spdlog::info("Session: Received message from client: {}", message);
+
+            return msg;
         }
         catch (const std::exception &e)
         {
@@ -63,13 +75,12 @@ namespace Session
         }
     }
 
-    void Session::writeMessage()
+    void Session::writeMessage(const Message::Message &msg)
     {
         try
         {
             spdlog::info("Session: Writing message to client");
-            std::string message = "Hello from server\n";
-            boost::asio::write(socket, boost::asio::buffer(message));
+            boost::asio::write(socket, boost::asio::buffer(msg.getContent()));
         }
         catch (const std::exception &e)
         {

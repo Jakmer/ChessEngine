@@ -5,6 +5,7 @@
 #include <boost/asio.hpp>
 #include <vector>
 #include "Session.hpp"
+#include "Message.hpp"
 
 namespace EngineServer
 {
@@ -14,6 +15,8 @@ namespace EngineServer
         EngineServer(boost::asio::io_context &ioContext, short port);
         ~EngineServer();
         void Start();
+        void sendMessage(const Message::Message &msg);
+        Message::Message receiveMessage();
 
     private:
         boost::asio::io_context &io_context_;

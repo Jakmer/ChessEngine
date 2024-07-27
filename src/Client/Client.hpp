@@ -4,6 +4,9 @@
 #include <boost/asio.hpp>
 #include <string>
 #include <spdlog/spdlog.h>
+#include "Message.hpp"
+
+#include <queue>
 
 using boost::asio::ip::tcp;
 namespace Client
@@ -13,9 +16,15 @@ namespace Client
     {
     public:
         Client(const std::string &host, const std::string &port);
+        ~Client();
 
         void connect();
-        void receiveMessage();
+        void disconnect();
+        void sendMessage(const Message::Message &msg);
+        Message::Message receiveMessage();
+        Message::Message lastReceivedMessage();
+        bool isConnected();
+        
 
     private:
         boost::asio::io_context io_context_;
@@ -23,6 +32,9 @@ namespace Client
         tcp::socket socket_;
         std::string host_;
         std::string port_;
+        bool isConnected_;
+
+        std::queue<Message::Message> msgQueue;
     };
 }
 

@@ -8,5 +8,7 @@ add_library(Client SHARED Client.cpp Client.hpp)
 # include directories
 target_include_directories(Client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+target_link_libraries(Client PUBLIC Message)
+
 # Install library
 install(TARGETS Client DESTINATION lib)

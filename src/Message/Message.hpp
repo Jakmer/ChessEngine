@@ -1,13 +1,23 @@
 #ifndef MESSAGE_HPP
 #define MESSAGE_HPP
 
+#include <string>
+
 namespace Message
 {
     class Message
     {
     public:
-        Message();
+        Message(std::string &msg);
+        Message(std::string &&msg);
         ~Message();
+        std::string getContent() const;
+
+    private:
+        void serialize();
+        void deserialize();
+
+        std::string content;
     };
 }
 

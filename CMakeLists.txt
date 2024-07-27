@@ -6,6 +6,8 @@ project(ChessEngine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+add_compile_options(-Wall -Wextra -pedantic)
+
 # install destination
 set(CMAKE_INSTALL_PREFIX /usr/local)
 
@@ -21,4 +23,4 @@ add_subdirectory(src/Game)
 add_subdirectory(src/User)
 
 # Add tests subdirectories
-add_subdirectory(tests/EngineStarterTest)
+add_subdirectory(tests)

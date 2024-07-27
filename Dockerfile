@@ -30,12 +30,6 @@ RUN cmake . \
 # Set the runtime library path
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
-# Install EngineStarterTest
-WORKDIR /usr/src/app/tests/EngineStarterTest
-RUN cmake . \
-	&& make \
-	&& make install 
-
 COPY scripts/start-client-server.sh /usr/src/app/scripts/start-client-server.sh
 
 RUN chmod +x /usr/src/app/scripts/start-client-server.sh

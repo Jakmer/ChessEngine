@@ -32,7 +32,7 @@ namespace Session
         bool isActive;
 
         Message::Message readMessage();
-        void writeMessage();
+        void writeMessage(const Message::Message &msg);
 
     };
 }
