@@ -19,14 +19,18 @@ namespace EngineServer
         void Start();
         void Stop();
         void sendMessage(const Message::Message &msg, boost::asio::ip::tcp::socket &socket);
-        void setClientLimit(int limit); // for testing 
         Message::Message receiveMessage();
+        void setClientLimit(int limit);
+        int getClientLimit();
+        static bool isRunning();
+        
 
     private:
         boost::asio::io_context &io_context_;
         boost::asio::ip::tcp::acceptor acceptor_;
         boost::asio::ip::tcp::socket socket_;
-        static bool isRunning;
+        static bool isRunning_;
+        bool isAccepting;
         int clientLimit = 0;
         std::vector<std::shared_ptr<User::User>> users;
         std::vector<std::shared_ptr<Session::Session>> sessions;

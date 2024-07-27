@@ -2,14 +2,17 @@
 
 namespace EngineServer
 {
-    bool EngineServer::isRunning = false;
+    bool EngineServer::isRunning_ = false;
 
     EngineServer::EngineServer(boost::asio::io_context &ioContext, short port) : io_context_(ioContext),
                                                                                  acceptor_(io_context_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
                                                                                  socket_(io_context_),
                                                                                  clientLimit(30),
                                                                                  users(),
-                                                                                 sessions()
+                                                                                 sessions(),
+                                                                                 connections(),
+                                                                                 mtx(),
+                                                                                 isAccepting(true)
     {
         if (port < 0)
         {
@@ -33,15 +36,15 @@ namespace EngineServer
     void EngineServer::Start()
     {
         spdlog::info("EngineServer: EngineServer started accepting connections");
-        isRunning = true;
+        isRunning_ = true;
 
-        while (isRunning)
+        while (isRunning_)
         {
             spdlog::info("EngineServer: Client limit: {}", clientLimit);
             if (clientLimit == 0)
             {
                 spdlog::info("EngineServer: Client limit reached");
-                isRunning = false;
+                isAccepting = false;
             }
             boost::asio::ip::tcp::socket socket(io_context_);
             boost::system::error_code ec;
@@ -126,7 +129,7 @@ namespace EngineServer
     void EngineServer::Stop()
     {
         spdlog::info("EngineServer: EngineServer stopped");
-        isRunning = false;
+        isRunning_ = false;
         for (auto &session : sessions)
         {
             session->stop();
@@ -143,6 +146,16 @@ namespace EngineServer
                 spdlog::error("EngineServer: Connection thread not joinable");
             }
         }
+    }
+
+    int EngineServer::getClientLimit()
+    {
+        return clientLimit;
+    }
+
+    bool EngineServer::isRunning()
+    {
+        return isRunning_;
     }
 
 } // namespace EngineServer
