@@ -68,6 +68,7 @@ namespace Session
         catch (const std::exception &e)
         {
             spdlog::error("Session: Exception: {}", e.what());
+            return Message::Message("Error");   // TODO: create error message
         }
     }
 

@@ -23,7 +23,6 @@ namespace EngineServer
         void setClientLimit(int limit);
         int getClientLimit();
         static bool isRunning();
-        
 
     private:
         boost::asio::io_context &io_context_;

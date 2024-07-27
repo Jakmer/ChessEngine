@@ -7,12 +7,12 @@ namespace EngineServer
     EngineServer::EngineServer(boost::asio::io_context &ioContext, short port) : io_context_(ioContext),
                                                                                  acceptor_(io_context_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
                                                                                  socket_(io_context_),
+                                                                                 isAccepting(true),
                                                                                  clientLimit(30),
                                                                                  users(),
                                                                                  sessions(),
                                                                                  connections(),
-                                                                                 mtx(),
-                                                                                 isAccepting(true)
+                                                                                 mtx()
     {
         if (port < 0)
         {
@@ -118,6 +118,7 @@ namespace EngineServer
         catch (const std::exception &e)
         {
             spdlog::error("EngineServer: Exception during receiveMessage: {}", e.what());
+            return Message::Message("Error"); // TODO: create error message
         }
     }
 

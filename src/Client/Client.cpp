@@ -4,7 +4,7 @@ namespace Client
 {
 
     Client::Client(const std::string &host, const std::string &port)
-        : resolver_(io_context_), socket_(io_context_), host_(host), port_(port), msgQueue(), isConnected_(false)
+        : resolver_(io_context_), socket_(io_context_), host_(host), port_(port), isConnected_(false), msgQueue()
     {
         spdlog::info("Client: Client object created");
     }
@@ -55,6 +55,7 @@ namespace Client
         catch (std::exception &e)
         {
             spdlog::error("Client: Exception during receiveMessage: {}", e.what());
+            return Message::Message("Error"); // TODO: create error message
         }
     }
 

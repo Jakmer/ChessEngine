@@ -2,7 +2,7 @@ FROM ubuntu:latest
 
 RUN apt-get update &&  apt-get upgrade -y && apt-get install -y \
 	cmake \
-	git	\
+	git \
 	build-essential \
 	libboost-all-dev
 
@@ -28,7 +28,7 @@ RUN cmake . \
 	&& make install
 
 # Set the runtime library path
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/usr/local/lib
 
 COPY scripts/start-client-server.sh /usr/src/app/scripts/start-client-server.sh
 
