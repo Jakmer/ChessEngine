@@ -21,7 +21,7 @@ jobs:
       run: docker run --name chess_engine_instance -d my_chess_engine tail -f /dev/null
 
     - name: Execute Tests
-      run: docker exec chess_engine_instance /usr/src/app/tests/EngineStarterTest/EngineStarterTest
+      run: docker exec chess_engine_instance /usr/src/app/tests/ChessEngineTests
     
     - name: Cleanup
       run: docker rm -f chess_engine_instance
