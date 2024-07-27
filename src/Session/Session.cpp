@@ -33,10 +33,6 @@ namespace Session
         {
             spdlog::info("Session: Session started");
 
-            std::string message = "Hello from server\n";
-            auto msg = Message::Message(message);
-            writeMessage(msg); // Server hello message
-
             isActive = false; // for testing purposes
 
             while (isActive)
@@ -81,6 +77,20 @@ namespace Session
         {
             spdlog::info("Session: Writing message to client");
             boost::asio::write(socket, boost::asio::buffer(msg.getContent()));
+        }
+        catch (const std::exception &e)
+        {
+            spdlog::error("Session: Exception: {}", e.what());
+        }
+    }
+
+    void Session::stop()
+    {
+        try
+        {
+            spdlog::info("Session: Session stopped");
+            isActive = false;
+
         }
         catch (const std::exception &e)
         {

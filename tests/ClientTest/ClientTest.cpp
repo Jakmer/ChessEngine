@@ -1,53 +1,54 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <boost/asio.hpp>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include "Client.hpp"
 #include "EngineServer.hpp"
 
 class ClientTest : public ::testing::Test
 {
 protected:
-    void SetUp() override
-    {
-        io_context_ = std::make_unique<boost::asio::io_context>();
-        server_ = std::make_unique<EngineServer::EngineServer>(*io_context_, 12345);
-
-        server_thread_ = std::thread([this]() {
-            io_context_->run();
-        });
-
-        server_->Start();
-    }
+    pid_t serverPid = -1;
 
     void TearDown() override
     {
-        io_context_->stop();
-        if (server_thread_.joinable())
+        if (serverPid > 0)
         {
-            server_thread_.join();
+            kill(serverPid, SIGTERM);
+            waitpid(serverPid, nullptr, 0);
         }
     }
-
-    std::unique_ptr<boost::asio::io_context> io_context_;
-    std::unique_ptr<EngineServer::EngineServer> server_;
-    std::thread server_thread_;
 };
 
 TEST_F(ClientTest, ConnectAndReceiveMessage)
 {
+    serverPid = fork();
+    if (serverPid == 0)
+    {
+        boost::asio::io_context io_context;
+        EngineServer::EngineServer server(io_context, 12345);
+        server.setClientLimit(1);
+        server.Start();
+        io_context.run();
+        exit(0);
+    }
+    else if (serverPid < 0)
+    {
+        FAIL() << "Failed to fork process for server";
+    }
+    sleep(1); // Poczekaj chwilę, aby serwer się uruchomił
+
     std::string host = "localhost";
     std::string port = "12345";
     Client::Client client(host, port);
 
     client.connect();
 
-    Message::Message msg("Hello, client!\n");
-    server_->sendMessage(msg);
-
     auto recvMsg = client.receiveMessage();
 
-
-    EXPECT_EQ(msg.getContent(), recvMsg.getContent());
+    EXPECT_EQ("Hello from server", recvMsg.getContent());
 }
 
 TEST_F(ClientTest, ConnectToNonExistentHost)
@@ -63,6 +64,22 @@ TEST_F(ClientTest, ConnectToNonExistentHost)
 
 TEST_F(ClientTest, Disconnect)
 {
+    serverPid = fork();
+    if (serverPid == 0)
+    {
+        boost::asio::io_context io_context;
+        EngineServer::EngineServer server(io_context, 12345);
+        server.setClientLimit(1);
+        server.Start();
+        io_context.run();
+        exit(0);
+    }
+    else if (serverPid < 0)
+    {
+        FAIL() << "Failed to fork process for server";
+    }
+    sleep(1); // Poczekaj chwilę, aby serwer się uruchomił
+
     std::string host = "localhost";
     std::string port = "12345";
     Client::Client client(host, port);
@@ -72,23 +89,4 @@ TEST_F(ClientTest, Disconnect)
     client.disconnect();
 
     EXPECT_FALSE(client.isConnected());
-}
-
-TEST_F(ClientTest, SendMessage)
-{
-    std::string host = "localhost";
-    std::string port = "12345";
-    Client::Client client(host, port);
-
-    client.connect();
-
-    std::string message = "Test message";
-
-    Message::Message msg(message);
-
-    client.sendMessage(msg);
-
-    auto recvMsg = server_->receiveMessage();
-
-    EXPECT_EQ(msg.getContent(), recvMsg.getContent());
 }

@@ -21,6 +21,7 @@ namespace Session
         ~Session();
 
         void start();
+        void stop();
 
         std::string getID();
     private:

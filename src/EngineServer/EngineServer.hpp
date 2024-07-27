@@ -6,6 +6,8 @@
 #include <vector>
 #include "Session.hpp"
 #include "Message.hpp"
+#include "User.hpp"
+#include <mutex>
 
 namespace EngineServer
 {
@@ -15,7 +17,9 @@ namespace EngineServer
         EngineServer(boost::asio::io_context &ioContext, short port);
         ~EngineServer();
         void Start();
-        void sendMessage(const Message::Message &msg);
+        void Stop();
+        void sendMessage(const Message::Message &msg, boost::asio::ip::tcp::socket &socket);
+        void setClientLimit(int limit); // for testing 
         Message::Message receiveMessage();
 
     private:
@@ -23,6 +27,12 @@ namespace EngineServer
         boost::asio::ip::tcp::acceptor acceptor_;
         boost::asio::ip::tcp::socket socket_;
         static bool isRunning;
+        int clientLimit = 0;
+        std::vector<std::shared_ptr<User::User>> users;
+        std::vector<std::shared_ptr<Session::Session>> sessions;
+        std::vector<std::thread> connections;
+        std::mutex mtx;
+
 
         void handleConnection(boost::asio::ip::tcp::socket socket);
     };
