@@ -2,7 +2,7 @@
 
 namespace Session
 {
-    Session::Session(boost::asio::ip::tcp::socket &&socket) : socket(std::move(socket)), isActive(true)
+    Session::Session(boost::asio::ip::tcp::socket &&socket) : socket(std::move(socket)), isActive_(true)
     {
         try
         {
@@ -33,9 +33,9 @@ namespace Session
         {
             spdlog::info("Session: Session started");
 
-            isActive = false; // for testing purposes
+            isActive_ = false; // for testing purposes
 
-            while (isActive)
+            while (isActive_)
             {
                 // TODO: implement timeout for readMessage
                 auto msg = readMessage();
@@ -74,6 +74,11 @@ namespace Session
 
     void Session::writeMessage(const Message::Message &msg)
     {
+        if(msg.getContent().empty())
+        {
+            spdlog::error("Session: Empty message");
+            throw std::invalid_argument("Empty message");
+        }
         try
         {
             spdlog::info("Session: Writing message to client");
@@ -90,12 +95,17 @@ namespace Session
         try
         {
             spdlog::info("Session: Session stopped");
-            isActive = false;
+            isActive_ = false;
 
         }
         catch (const std::exception &e)
         {
             spdlog::error("Session: Exception: {}", e.what());
         }
+    }
+
+    bool Session::isActive()
+    {
+        return isActive_;
     }
 }

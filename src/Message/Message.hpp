@@ -12,10 +12,10 @@ namespace Message
         Message(std::string &&msg);
         ~Message();
         std::string getContent() const;
-
-    private:
         void serialize();
         void deserialize();
+
+    private:
 
         std::string content;
     };
