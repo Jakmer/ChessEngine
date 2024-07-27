@@ -75,7 +75,7 @@ namespace EngineServer
         try
         {
             boost::asio::streambuf receive_buffer;
-            boost::asio::read_until(socket_, receive_buffer, '\n'); ?// TODO: change terminator to Message::Message::TERMINATOR
+            boost::asio::read_until(socket_, receive_buffer, '\n'); // TODO: change terminator to Message::Message::TERMINATOR
 
             std::istream input(&receive_buffer);
             std::string message;
