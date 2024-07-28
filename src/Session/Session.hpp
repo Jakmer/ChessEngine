@@ -11,6 +11,7 @@
 #include "User.hpp"
 #include "Game.hpp"
 #include "Message.hpp"
+#include "MsgTypes.hpp"
 
 namespace Session
 {

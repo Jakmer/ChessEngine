@@ -40,22 +40,31 @@ namespace Client
         try
         {
             boost::asio::streambuf receive_buffer;
-            boost::asio::read_until(socket_, receive_buffer, '\n'); // TODO: change terminator to Message::Message::TERMINATOR
+            boost::asio::read_until(socket_, receive_buffer, Message::TERMINATOR); // TODO: fix deserialization due to terminator not found
 
             std::istream input(&receive_buffer);
-            std::string message;
-            std::getline(input, message);
-            auto msg = Message::Message(message);
+            std::string serializedMsg;
+            std::getline(input, serializedMsg);
+            spdlog::info("Client: Received message from server1: {}", serializedMsg);
+            // TODO: here is the problem because the first string must be the message type to know which message to create
+            std::shared_ptr<Message::MsgInfoIfc> msgInfo = std::make_shared<Message::MsgConnect>(serializedMsg, true);
+            Message::Message msg(msgInfo, Message::MsgType::CONNECT);
+
+            spdlog::info("Client: Received message from server2: {}", msg.getSerializedMsg());
+
+
+
             this->msgQueue.push(msg);
 
-            spdlog::info("Client: Received message from server: {}", message);
+            
 
             return msg;
         }
         catch (std::exception &e)
         {
             spdlog::error("Client: Exception during receiveMessage: {}", e.what());
-            return Message::Message("Error"); // TODO: create error message
+            auto msgInfo = std::make_shared<Message::MsgError>("Error: " + std::string(e.what()));
+            return Message::Message(msgInfo, Message::MsgType::ERROR);
         }
     }
 
@@ -73,8 +82,14 @@ namespace Client
     {
         try
         {
-            boost::asio::write(socket_, boost::asio::buffer(msg.getContent()));
-            spdlog::info("Client: Sent message to server: {}", msg.getContent());
+            //check if the message has a terminator at the end
+            if(msg.getSerializedMsg().back() != Message::TERMINATOR)
+            {
+                spdlog::error("Client: Message does not have a terminator at the end");
+                throw std::invalid_argument("Message does not have a terminator at the end");
+            }
+            boost::asio::write(socket_, boost::asio::buffer(msg.getSerializedMsg()));
+            spdlog::info("Client: Sent message to server {}", msg.getSerializedMsg());
         }
         catch (std::exception &e)
         {

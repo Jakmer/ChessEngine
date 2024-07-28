@@ -6,6 +6,10 @@
 #include <vector>
 #include "Session.hpp"
 #include "Message.hpp"
+#include "MsgCreator.hpp"
+#include "MsgHandler.hpp"
+#include "MsgTypes.hpp"
+
 #include "User.hpp"
 #include <mutex>
 
@@ -19,7 +23,7 @@ namespace EngineServer
         void Start();
         void Stop();
         void sendMessage(const Message::Message &msg, boost::asio::ip::tcp::socket &socket);
-        Message::Message receiveMessage();
+        Message::Message receiveMessage(boost::asio::ip::tcp::socket &socket);
         void setClientLimit(int limit);
         int getClientLimit();
         static bool isRunning();

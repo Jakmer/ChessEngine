@@ -68,10 +68,23 @@ namespace EngineServer
     {
         spdlog::info("EngineServer: Connection accepted");
 
-        // server hello message
-        std::string message = "Hello from server\n";
-        auto msg = Message::Message(message);
-        sendMessage(msg, socket);
+        MsgCreator msgCreator;
+        MsgHandler msgHandler;
+        std::string name = "Wrochess";
+        auto connectMsgInfo = msgCreator.msgConnect(name);
+
+        auto connectMsg = Message::Message(connectMsgInfo, Message::MsgType::CONNECT);
+        // TODO: try to implement function for faster creating messages in EnginveServe
+        spdlog::info("EngineServer: Sending connection message to client {}", connectMsg.getSerializedMsg());
+        sendMessage(connectMsg, socket);
+
+        // TODO: implement timeout for receiving message
+
+        auto respondMsg = receiveMessage(socket);
+
+        msgHandler.handleMsg(respondMsg);
+
+
 
         // auto user = std::make_shared<User::User>();
         // auto session = std::make_shared<Session::Session>(std::move(socket));
@@ -88,10 +101,10 @@ namespace EngineServer
 
     void EngineServer::sendMessage(const Message::Message &msg, boost::asio::ip::tcp::socket &socket)
     {
-        spdlog::info("EngineServer: Sending message to client: {}", msg.getContent());
+        spdlog::info("EngineServer: Sending message to client");
         try
         {
-            boost::asio::write(socket, boost::asio::buffer(msg.getContent()));
+            boost::asio::write(socket, boost::asio::buffer(msg.getSerializedMsg()));
         }
         catch (const std::exception &e)
         {
@@ -99,26 +112,30 @@ namespace EngineServer
         }
     }
 
-    Message::Message EngineServer::receiveMessage()
+    Message::Message EngineServer::receiveMessage(boost::asio::ip::tcp::socket &socket)
     {
         try
         {
             boost::asio::streambuf receive_buffer;
-            boost::asio::read_until(socket_, receive_buffer, '\n'); // TODO: change terminator to Message::Message::TERMINATOR
+            boost::asio::read_until(socket, receive_buffer, Message::TERMINATOR);
 
             std::istream input(&receive_buffer);
             std::string message;
             std::getline(input, message);
-            auto msg = Message::Message(message);
+            MsgCreator msgCreator;
+            std::shared_ptr<Message::MsgInfoIfc> msgInfo = std::make_shared<Message::MsgConnect>(message);
+            auto msg = Message::Message(msgInfo, Message::MsgType::CONNECT);
 
-            spdlog::info("EngineServer: Received message from client: {}", message);
+            spdlog::info("EngineServer: Received message from client");
 
             return msg;
         }
         catch (const std::exception &e)
         {
             spdlog::error("EngineServer: Exception during receiveMessage: {}", e.what());
-            return Message::Message("Error"); // TODO: create error message
+            std::string errorMessage = "Error: " + std::string(e.what());
+            std::shared_ptr<Message::MsgInfoIfc> msgInfo = std::make_shared<Message::MsgError>(errorMessage);
+            return Message::Message(msgInfo, Message::MsgType::ERROR);
         }
     }
 

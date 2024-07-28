@@ -1,4 +1,6 @@
 #include "Session.hpp"
+#include "MsgInfoIfc.hpp"
+
 
 namespace Session
 {
@@ -59,22 +61,24 @@ namespace Session
             std::istream input(&receive_buffer);
             std::string message;
             std::getline(input, message);
-            auto msg = Message::Message(message);
+            auto msgInfo = std::make_shared<Message::MsgConnect>(message);
+            auto msg = Message::Message(msgInfo, Message::MsgType::CONNECT);        // chenge connect
 
-            spdlog::info("Session: Received message from client: {}", message);
+            spdlog::info("Session: Received message from client");
 
             return msg;
         }
         catch (const std::exception &e)
         {
             spdlog::error("Session: Exception: {}", e.what());
-            return Message::Message("Error");   // TODO: create error message
+            auto msgInfo = std::make_shared<Message::MsgError>("Error: " + std::string(e.what()));
+            return Message::Message(msgInfo, Message::MsgType::ERROR);
         }
     }
 
     void Session::writeMessage(const Message::Message &msg)
     {
-        if(msg.getContent().empty())
+        if(msg.empty())
         {
             spdlog::error("Session: Empty message");
             throw std::invalid_argument("Empty message");
@@ -82,7 +86,7 @@ namespace Session
         try
         {
             spdlog::info("Session: Writing message to client");
-            boost::asio::write(socket, boost::asio::buffer(msg.getContent()));
+            boost::asio::write(socket, boost::asio::buffer(msg.getSerializedMsg()));
         }
         catch (const std::exception &e)
         {

@@ -1,4 +1,6 @@
 #include "Client.hpp"
+#include "MsgTypes.hpp"
+#include <memory>
 
 int main(int argc, char *argv[])
 {
@@ -26,6 +28,12 @@ int main(int argc, char *argv[])
         client.connect();
 
         client.receiveMessage();
+
+        std::string name = "Client";
+        std::shared_ptr<Message::MsgInfoIfc> msgInfo = std::make_shared<Message::MsgConnect>(name);
+        Message::Message msg(msgInfo, Message::MsgType::CONNECT);
+
+        client.sendMessage(msg);
     }
     catch (const std::exception &e)
     {

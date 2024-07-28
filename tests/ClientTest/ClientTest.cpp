@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include "Client.hpp"
 #include "EngineServer.hpp"
+#include "MsgTypes.hpp"
+#include <memory>
 
 class ClientTest : public ::testing::Test
 {
@@ -47,8 +49,9 @@ TEST_F(ClientTest, ConnectAndReceiveMessage)
     client.connect();
 
     auto recvMsg = client.receiveMessage();
+    auto msg = std::make_shared<Message::MsgConnect>(recvMsg.getSerializedMsg(), true);
 
-    EXPECT_EQ("Hello from server", recvMsg.getContent());
+    EXPECT_EQ("Hello from server", msg->content);
 }
 
 TEST_F(ClientTest, ConnectToNonExistentHost)

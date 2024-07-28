@@ -2,23 +2,47 @@
 #define MESSAGE_HPP
 
 #include <string>
+#include <memory>
+#include "MsgInfoIfc.hpp"
+#include "MsgTypes.hpp"
 
 namespace Message
 {
+    extern const char TERMINATOR;
+
+    enum class MsgType
+    {
+        CONNECT = 0,
+        LOGIN,
+        GAMEACTION,
+        ERROR,
+        DISCONNECT,
+        AUTH,
+        CHAT,
+        GAMESTATEUPDATE,
+        PING,
+        PONG,
+        NOTIFICATION,
+        COMMAND,
+    };
+
+    class MsgInfoIfc;   // Forward declaration
+
     class Message
     {
     public:
-        Message(std::string &msg);
-        Message(std::string &&msg);
+        Message(const std::shared_ptr<MsgInfoIfc> &msg, const MsgType &type);
+        Message() = default;
         ~Message();
-        std::string getContent() const;
-        void serialize();
-        void deserialize();
+        std::string getSerializedMsg() const;
+        MsgType getType() const;
+        bool empty() const;
 
     private:
-
-        std::string content;
+        std::shared_ptr<MsgInfoIfc> msg;
+        MsgType type;
     };
+
 }
 
 #endif // MESSAGE_HPP

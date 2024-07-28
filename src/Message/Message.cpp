@@ -2,33 +2,29 @@
 
 namespace Message
 {
-    Message::Message(std::string &msg)
-    {
-        // TODO: serialization and deserialization the message
-        this->content = msg;
-    }
+    const char TERMINATOR = '\0';
 
-    Message::Message(std::string &&msg)
+    Message::Message(const std::shared_ptr<MsgInfoIfc> &msg, const MsgType &type)
+        : msg(msg), type(type)
     {
-        this->content = msg;
     }
 
     Message::~Message()
     {
     }
 
-    std::string Message::getContent() const
+    std::string Message::getSerializedMsg() const
     {
-        return content;
+        return msg->getSerialized();
     }
 
-    void Message::serialize()
+    MsgType Message::getType() const
     {
-
+        return type;
     }
 
-    void Message::deserialize()
+    bool Message::empty() const
     {
-
+        return msg->content.empty();    // TODO: improve this
     }
 }
