@@ -8,6 +8,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_compile_options(-Wall -Wextra -pedantic)
 
+# Enable ccache
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+endif()
+
+# Set cmake generator
+set(CMAKE_GENERATOR "Ninja")
+
 # install destination
 set(CMAKE_INSTALL_PREFIX /usr/local)
 
