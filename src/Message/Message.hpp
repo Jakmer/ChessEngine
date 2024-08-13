@@ -8,7 +8,7 @@
 
 namespace Message
 {
-    extern const char TERMINATOR;
+    extern const std::string TERMINATOR;
 
     enum class MsgType
     {

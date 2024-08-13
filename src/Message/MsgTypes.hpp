@@ -7,7 +7,7 @@
 
 namespace Message
 {
-    extern const char TERMINATOR;
+    extern const std::string TERMINATOR;
 
     class MsgConnect : public MsgInfoIfc
     {

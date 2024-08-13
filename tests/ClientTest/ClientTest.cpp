@@ -40,7 +40,7 @@ TEST_F(ClientTest, ConnectAndReceiveMessage)
     {
         FAIL() << "Failed to fork process for server";
     }
-    sleep(1); // Poczekaj chwilę, aby serwer się uruchomił
+    sleep(1);
 
     std::string host = "localhost";
     std::string port = "12345";
@@ -51,7 +51,7 @@ TEST_F(ClientTest, ConnectAndReceiveMessage)
     auto recvMsg = client.receiveMessage();
     auto msg = std::make_shared<Message::MsgConnect>(recvMsg.getSerializedMsg(), true);
 
-    EXPECT_EQ("Hello from server", msg->content);
+    EXPECT_EQ("Hello from Wrochess", msg->content);
 }
 
 TEST_F(ClientTest, ConnectToNonExistentHost)

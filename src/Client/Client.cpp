@@ -40,23 +40,17 @@ namespace Client
         try
         {
             boost::asio::streambuf receive_buffer;
-            boost::asio::read_until(socket_, receive_buffer, Message::TERMINATOR); // TODO: fix deserialization due to terminator not found
+            boost::asio::read_until(socket_, receive_buffer, Message::TERMINATOR);
 
             std::istream input(&receive_buffer);
             std::string serializedMsg;
             std::getline(input, serializedMsg);
-            spdlog::info("Client: Received message from server1: {}", serializedMsg);
+            spdlog::info("Client: Received message from server: {}", serializedMsg);
             // TODO: here is the problem because the first string must be the message type to know which message to create
             std::shared_ptr<Message::MsgInfoIfc> msgInfo = std::make_shared<Message::MsgConnect>(serializedMsg, true);
             Message::Message msg(msgInfo, Message::MsgType::CONNECT);
 
-            spdlog::info("Client: Received message from server2: {}", msg.getSerializedMsg());
-
-
-
             this->msgQueue.push(msg);
-
-            
 
             return msg;
         }
@@ -82,8 +76,10 @@ namespace Client
     {
         try
         {
-            //check if the message has a terminator at the end
-            if(msg.getSerializedMsg().back() != Message::TERMINATOR)
+            std::string str = msg.getSerializedMsg();
+            std::string lastEightChars = str.substr(str.size() - 8);
+
+            if(lastEightChars != Message::TERMINATOR)
             {
                 spdlog::error("Client: Message does not have a terminator at the end");
                 throw std::invalid_argument("Message does not have a terminator at the end");
@@ -103,7 +99,7 @@ namespace Client
         {
             socket_.close();
             isConnected_ = false;
-            spdlog::info("Client: Disconnected from server");
+            spdlog::info("Client: Disconnected from Wrochess");
         }
         catch (std::exception &e)
         {

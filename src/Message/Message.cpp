@@ -2,7 +2,7 @@
 
 namespace Message
 {
-    const char TERMINATOR = '\0';
+    const std::string TERMINATOR = "01111110";
 
     Message::Message(const std::shared_ptr<MsgInfoIfc> &msg, const MsgType &type)
         : msg(msg), type(type)

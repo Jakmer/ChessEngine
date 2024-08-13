@@ -1,4 +1,7 @@
 #include "MsgTypes.hpp"
+#include <iostream>
+#include <vector>
+#include <spdlog/spdlog.h>
 
 namespace Message
 {
@@ -36,20 +39,21 @@ namespace Message
 
     void MsgConnect::deserialize()
     {
-
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
 
-        this->name = token;
+        this->name = tokens[0];
+        this->content = tokens[1];
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }
@@ -102,7 +106,7 @@ namespace Message
 
         this->username = token;
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }
@@ -155,7 +159,7 @@ namespace Message
 
         this->action = token;
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }
@@ -208,7 +212,7 @@ namespace Message
 
         this->errorMessage = token;
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }
@@ -258,7 +262,7 @@ namespace Message
             serialized.erase(0, pos + delimiter.length());
         }
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }
@@ -311,7 +315,7 @@ namespace Message
 
         this->token = token;
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }
@@ -364,7 +368,7 @@ namespace Message
 
         this->message = token;
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }
@@ -417,7 +421,7 @@ namespace Message
 
         this->state = token;
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }
@@ -466,7 +470,7 @@ namespace Message
             serialized.erase(0, pos + delimiter.length());
         }
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }
@@ -515,7 +519,7 @@ namespace Message
             serialized.erase(0, pos + delimiter.length());
         }
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }
@@ -568,7 +572,7 @@ namespace Message
 
         this->notification = token;
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }
@@ -621,7 +625,7 @@ namespace Message
 
         this->command = token;
 
-        if (serialized != std::to_string(TERMINATOR))
+        if (serialized != TERMINATOR)
         {
             throw std::invalid_argument("Invalid message format: No terminator found");
         }

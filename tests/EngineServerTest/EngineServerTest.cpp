@@ -96,7 +96,7 @@ TEST_F(EngineServerTest, SendMessage)
     auto recvMsg = client.receiveMessage();
     auto msg = std::make_shared<Message::MsgConnect>(recvMsg.getSerializedMsg(), true);
 
-    EXPECT_EQ("Hello from server", msg->content);
+    EXPECT_EQ("Hello from Wrochess", msg->content);
     
 }
 
