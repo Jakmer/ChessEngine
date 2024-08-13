@@ -19,6 +19,45 @@ namespace EngineServer
         return msg;
     }
 
+    Message::Message MsgHandler::returnCorrectMessageType(std::string &serializedMsg)
+    {
+        spdlog::info("Returning correct message type");
+        
+        std::string delimiter = ";";
+        std::string typeStr = serializedMsg.substr(0, serializedMsg.find(delimiter));
+        int type = std::stoi(typeStr);
+
+        switch(type)
+        {
+            case 0:
+                return Message::Message(std::make_shared<Message::MsgConnect>(serializedMsg, true), Message::MsgType::CONNECT);
+            case 1:
+                return Message::Message(std::make_shared<Message::MsgLogin>(serializedMsg, true), Message::MsgType::LOGIN);
+            case 2:
+                return Message::Message(std::make_shared<Message::MsgGameAction>(serializedMsg, true), Message::MsgType::GAMEACTION);
+            case 3:
+                return Message::Message(std::make_shared<Message::MsgError>(serializedMsg, true), Message::MsgType::ERROR);
+            case 4:
+                return Message::Message(std::make_shared<Message::MsgDisconnect>(serializedMsg, true), Message::MsgType::DISCONNECT);
+            case 5:
+                return Message::Message(std::make_shared<Message::MsgAuth>(serializedMsg, true), Message::MsgType::AUTH);
+            case 6:
+                return Message::Message(std::make_shared<Message::MsgChat>(serializedMsg, true), Message::MsgType::CHAT);
+            case 7:
+                return Message::Message(std::make_shared<Message::MsgGameStateUpdate>(serializedMsg, true), Message::MsgType::GAMESTATEUPDATE);
+            case 8:
+                return Message::Message(std::make_shared<Message::MsgPing>(serializedMsg, true), Message::MsgType::PING);
+            case 9:
+                return Message::Message(std::make_shared<Message::MsgPong>(serializedMsg, true), Message::MsgType::PONG);
+            case 10:
+                return Message::Message(std::make_shared<Message::MsgNotification>(serializedMsg, true), Message::MsgType::NOTIFICATION);
+            case 11:
+                return Message::Message(std::make_shared<Message::MsgCommand>(serializedMsg, true), Message::MsgType::COMMAND);
+            default:
+                throw std::invalid_argument("Unknown message type");
+        }
+    }
+
     Message::Message MsgHandler::proccesMessage(Message::Message &msg)
     {
         auto msgType = msg.getType();

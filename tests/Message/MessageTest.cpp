@@ -1,54 +1,46 @@
 #include <gtest/gtest.h>
+#include <memory>
 #include "Message.hpp"
 #include "MsgTypes.hpp"
+#include "MsgInfoIfc.hpp"
 
 class MessageTest : public ::testing::Test
 {
 protected:
     void SetUp() override
     {
+        // Setup code if needed
     }
 
     void TearDown() override
     {
+        // Cleanup code if needed
     }
 };
 
-// TODO: Implement tests for Message class
-
-TEST_F(MessageTest, ConstructorLValue)
+TEST_F(MessageTest, GetMessageType)
 {
-    std::string msg = "Hello, World!";
-   // Message::Message message(msg);
-   // EXPECT_EQ(message.getContent(), msg);
+    std::string name = "Dummy";
+    std::shared_ptr<Message::MsgConnect> msgConnect = std::make_shared<Message::MsgConnect>(name);
+    Message::Message msg(msgConnect, Message::MsgType::CONNECT);
+
+    EXPECT_EQ(msg.getType(), Message::MsgType::CONNECT);
 }
 
-TEST_F(MessageTest, ConstructorRValue)
+TEST_F(MessageTest, GetSerializedMessage)
 {
-    std::string msg = "Hello, World!";
-    //Message::Message message(std::move(msg));
-    //EXPECT_EQ(message.getContent(), "Hello, World!");
+    std::string name = "Dummy";
+    std::shared_ptr<Message::MsgConnect> msgConnect = std::make_shared<Message::MsgConnect>(name);
+    Message::Message msg(msgConnect, Message::MsgType::CONNECT);
+
+    EXPECT_EQ(msg.getSerializedMsg(), "0;Dummy;Hello from Dummy;01111110");
 }
 
-TEST_F(MessageTest, GetContent)
+TEST_F(MessageTest, EmptyMessage)
 {
-    std::string msg = "Test Content";
-    //Message::Message message(msg);
-    //EXPECT_EQ(message.getContent(), msg);
-}
+    std::string name = "Dummy";
+    std::shared_ptr<Message::MsgConnect> msgConnect = std::make_shared<Message::MsgConnect>(name);
+    Message::Message msg(msgConnect, Message::MsgType::CONNECT);
 
-TEST_F(MessageTest, Serialize)
-{
-    std::string msg = "Serialize Test";
-    //Message::Message message(msg);
-    //message.serialize();
-    // EXPECT_EQ(message.getContent(), expectedSerializedContent);
-}
-
-TEST_F(MessageTest, Deserialize)
-{
-    std::string msg = "Deserialize Test";
-    //Message::Message message(msg);
-    //message.deserialize();
-    // EXPECT_EQ(message.getContent(), expectedDeserializedContent);
+    EXPECT_FALSE(msg.empty());
 }

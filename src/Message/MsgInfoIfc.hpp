@@ -11,11 +11,12 @@ namespace Message
     class MsgInfoIfc
     {
     public:
+        std::string type;
         std::string content;    
         std::string serialized;
 
         virtual ~MsgInfoIfc() = default;
-        virtual void serialize() = 0;   // TODO: fix serialization because it gets looped couple of times
+        virtual void serialize() = 0;
         virtual void deserialize() = 0;
 
         std::string getSerialized()
@@ -24,6 +25,7 @@ namespace Message
             serialize();
             return serialized;
         }
+
     };
 }
 

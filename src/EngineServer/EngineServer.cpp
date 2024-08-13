@@ -84,8 +84,6 @@ namespace EngineServer
 
         msgHandler.handleMsg(respondMsg);
 
-
-
         // auto user = std::make_shared<User::User>();
         // auto session = std::make_shared<Session::Session>(std::move(socket));
 
@@ -122,9 +120,20 @@ namespace EngineServer
             std::istream input(&receive_buffer);
             std::string message;
             std::getline(input, message);
-            MsgCreator msgCreator;
-            std::shared_ptr<Message::MsgInfoIfc> msgInfo = std::make_shared<Message::MsgConnect>(message);
-            auto msg = Message::Message(msgInfo, Message::MsgType::CONNECT);
+
+            Message::Message msg;
+
+            try
+            {
+                msg = MsgHandler::returnCorrectMessageType(message);
+            }
+            catch (const std::exception &e)
+            {
+                spdlog::error("EngineServer: Exception during receiveMessage: {}", e.what());
+                std::string errorMessage = "Error: " + std::string(e.what());
+                std::shared_ptr<Message::MsgInfoIfc> msgInfo = std::make_shared<Message::MsgError>(errorMessage);
+                return Message::Message(msgInfo, Message::MsgType::ERROR);
+            }
 
             spdlog::info("EngineServer: Received message from client");
 

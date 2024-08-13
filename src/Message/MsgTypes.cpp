@@ -7,6 +7,7 @@ namespace Message
 {
     MsgConnect::MsgConnect(const std::string &name)
     {
+        this->type = std::to_string(static_cast<int>(MsgType::CONNECT));
         this->name = name;
         this->content = "Hello from " + name;
     }
@@ -32,6 +33,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += name + ";";
         serialized += content + ";";
         serialized += TERMINATOR;
@@ -50,8 +52,9 @@ namespace Message
             serialized.erase(0, pos + delimiter.length());
         }
 
-        this->name = tokens[0];
-        this->content = tokens[1];
+        this->type = tokens[0];
+        this->name = tokens[1];
+        this->content = tokens[2];
 
         if (serialized != TERMINATOR)
         {
@@ -62,6 +65,7 @@ namespace Message
     // MsgLogin class implementation
     MsgLogin::MsgLogin(const std::string &username)
     {
+        this->type = std::to_string(static_cast<int>(MsgType::LOGIN));
         this->username = username;
     }
 
@@ -86,6 +90,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += username + ";";
         serialized += content + ";";
         serialized += TERMINATOR;
@@ -97,14 +102,17 @@ namespace Message
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
 
-        this->username = token;
+        this->type = tokens[0];
+        this->username = tokens[1];
+        this->content = tokens[2];
 
         if (serialized != TERMINATOR)
         {
@@ -115,6 +123,7 @@ namespace Message
     // MsgGameAction class implementation
     MsgGameAction::MsgGameAction(const std::string &action)
     {
+        this->type = std::to_string(static_cast<int>(MsgType::GAMEACTION));
         this->action = action;
     }
 
@@ -139,6 +148,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += action + ";";
         serialized += content + ";";
         serialized += TERMINATOR;
@@ -150,14 +160,17 @@ namespace Message
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
 
-        this->action = token;
+        this->type = tokens[0];
+        this->action = tokens[1];
+        this->content = tokens[2];
 
         if (serialized != TERMINATOR)
         {
@@ -168,6 +181,7 @@ namespace Message
     // MsgError class implementation
     MsgError::MsgError(const std::string &errorMessage)
     {
+        this->type = std::to_string(static_cast<int>(MsgType::ERROR));
         this->errorMessage = errorMessage;
     }
 
@@ -192,6 +206,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += errorMessage + ";";
         serialized += content + ";";
         serialized += TERMINATOR;
@@ -203,14 +218,17 @@ namespace Message
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
 
-        this->errorMessage = token;
+        this->type = tokens[0];
+        this->errorMessage = tokens[1];
+        this->content = tokens[2];
 
         if (serialized != TERMINATOR)
         {
@@ -221,6 +239,7 @@ namespace Message
     // MsgDisconnect class implementation
     MsgDisconnect::MsgDisconnect(const std::string &reason) : reason(reason)
     {
+        this->type = std::to_string(static_cast<int>(MsgType::DISCONNECT));
     }
 
     MsgDisconnect::MsgDisconnect(const std::string &serializedString, bool deserialize)
@@ -244,6 +263,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += content + ";";
         serialized += reason + ";";
         serialized += TERMINATOR;
@@ -255,12 +275,17 @@ namespace Message
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
+
+        this->type = tokens[0];
+        this->content = tokens[1];
+        this->reason = tokens[2];
 
         if (serialized != TERMINATOR)
         {
@@ -271,6 +296,7 @@ namespace Message
     // MsgAuth class implementation
     MsgAuth::MsgAuth(const std::string &token)
     {
+        this->type = std::to_string(static_cast<int>(MsgType::AUTH));
         this->token = token;
     }
 
@@ -295,6 +321,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += token + ";";
         serialized += content + ";";
         serialized += TERMINATOR;
@@ -306,14 +333,17 @@ namespace Message
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
 
-        this->token = token;
+        this->type = tokens[0];
+        this->token = tokens[1];
+        this->content = tokens[2];
 
         if (serialized != TERMINATOR)
         {
@@ -324,6 +354,7 @@ namespace Message
     // MsgChat class implementation
     MsgChat::MsgChat(const std::string &message)
     {
+        this->type = std::to_string(static_cast<int>(MsgType::CHAT));
         this->message = message;
     }
 
@@ -348,6 +379,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += message + ";";
         serialized += content + ";";
         serialized += TERMINATOR;
@@ -359,14 +391,17 @@ namespace Message
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
 
-        this->message = token;
+        this->type = tokens[0];
+        this->message = tokens[1];
+        this->content = tokens[2];
 
         if (serialized != TERMINATOR)
         {
@@ -377,6 +412,7 @@ namespace Message
     // MsgGameStateUpdate class implementation
     MsgGameStateUpdate::MsgGameStateUpdate(const std::string &state)
     {
+        this->type = std::to_string(static_cast<int>(MsgType::GAMESTATEUPDATE));
         this->state = state;
     }
 
@@ -401,6 +437,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += state + ";";
         serialized += content + ";";
         serialized += TERMINATOR;
@@ -412,14 +449,17 @@ namespace Message
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
 
-        this->state = token;
+        this->type = tokens[0];
+        this->state = tokens[1];
+        this->content = tokens[2];
 
         if (serialized != TERMINATOR)
         {
@@ -430,6 +470,7 @@ namespace Message
     // MsgPing class implementation
     MsgPing::MsgPing()
     {
+        this->type = std::to_string(static_cast<int>(MsgType::PING));
     }
 
     MsgPing::MsgPing(const std::string &serializedString, bool deserialize)
@@ -453,6 +494,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += content + ";";
         serialized += TERMINATOR;
     }
@@ -463,12 +505,16 @@ namespace Message
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
+
+        this->type = tokens[0];
+        this->content = tokens[1];
 
         if (serialized != TERMINATOR)
         {
@@ -479,6 +525,8 @@ namespace Message
     // MsgPong class implementation
     MsgPong::MsgPong()
     {
+        this->type = std::to_string(static_cast<int>(MsgType::PONG));
+        this->content = "Pong";
     }
 
     MsgPong::MsgPong(const std::string &serializedString, bool deserialize)
@@ -502,6 +550,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += content + ";";
         serialized += TERMINATOR;
     }
@@ -512,12 +561,16 @@ namespace Message
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
+
+        this->type = tokens[0];
+        this->content = tokens[1];
 
         if (serialized != TERMINATOR)
         {
@@ -528,6 +581,7 @@ namespace Message
     // MsgNotification class implementation
     MsgNotification::MsgNotification(const std::string &notification)
     {
+        this->type = std::to_string(static_cast<int>(MsgType::NOTIFICATION));
         this->notification = notification;
     }
 
@@ -552,6 +606,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += notification + ";";
         serialized += content + ";";
         serialized += TERMINATOR;
@@ -563,14 +618,17 @@ namespace Message
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
 
-        this->notification = token;
+        this->type = tokens[0];
+        this->notification = tokens[1];
+        this->content = tokens[2];
 
         if (serialized != TERMINATOR)
         {
@@ -581,6 +639,7 @@ namespace Message
     // MsgCommand class implementation
     MsgCommand::MsgCommand(const std::string &command)
     {
+        this->type = std::to_string(static_cast<int>(MsgType::COMMAND));
         this->command = command;
     }
 
@@ -605,6 +664,7 @@ namespace Message
     {
         serialized.clear();
 
+        serialized += type +";";
         serialized += command + ";";
         serialized += content + ";";
         serialized += TERMINATOR;
@@ -616,14 +676,17 @@ namespace Message
         std::string delimiter = ";";
 
         size_t pos = 0;
-        std::string token;
+        std::vector<std::string> tokens;
         while ((pos = serialized.find(delimiter)) != std::string::npos)
         {
-            token = serialized.substr(0, pos);
+            std::string token = serialized.substr(0, pos);
+            tokens.push_back(token);
             serialized.erase(0, pos + delimiter.length());
         }
 
-        this->command = token;
+        this->type = tokens[0];
+        this->command = tokens[1];
+        this->content = tokens[2];
 
         if (serialized != TERMINATOR)
         {

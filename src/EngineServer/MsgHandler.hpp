@@ -14,6 +14,7 @@ namespace EngineServer
         ~MsgHandler();
 
         Message::Message handleMsg(Message::Message &msg);
+        static Message::Message returnCorrectMessageType(std::string &serializedMsg);
 
     private:
         Message::Message proccesMessage(Message::Message &msg);

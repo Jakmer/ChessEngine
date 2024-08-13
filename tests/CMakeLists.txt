@@ -25,6 +25,7 @@ target_sources(ChessEngineTests PRIVATE
 	ClientTest/ClientTest.cpp
 	Game/GameTest.cpp
 	Message/MessageTest.cpp
+	Message/MsgTypesTest.cpp
 	MessageHandler/MessageHandlerTest.cpp
 	Session/SessionTest.cpp
 	User/UserTest.cpp
