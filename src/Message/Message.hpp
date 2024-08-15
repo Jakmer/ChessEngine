@@ -36,6 +36,7 @@ namespace Message
         ~Message();
         std::string getSerializedMsg() const;
         MsgType getType() const;
+        std::string getContent() const;
         bool empty() const;
 
     private:

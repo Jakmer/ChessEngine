@@ -14,5 +14,10 @@ add_library(Message SHARED
 # include directories
 target_include_directories(Message PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+# Add debug flags if ENABLE_DEBUG is ON
+if(ENABLE_DEBUG)
+    target_compile_options(Message PRIVATE -g)
+endif()
+
 # Install library
 install(TARGETS Message DESTINATION lib)

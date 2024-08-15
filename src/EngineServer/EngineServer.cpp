@@ -72,25 +72,47 @@ namespace EngineServer
         MsgHandler msgHandler;
         std::string name = "Wrochess";
         auto connectMsgInfo = msgCreator.msgConnect(name);
-
         auto connectMsg = Message::Message(connectMsgInfo, Message::MsgType::CONNECT);
-        // TODO: try to implement function for faster creating messages in EnginveServe
         spdlog::info("EngineServer: Sending connection message to client {}", connectMsg.getSerializedMsg());
         sendMessage(connectMsg, socket);
 
         // TODO: implement timeout for receiving message
 
         auto respondMsg = receiveMessage(socket);
+        if(respondMsg.getType() != Message::MsgType::CONNECT)
+        {
+            spdlog::error("EngineServer: Expected CONNECT message, but received different message");
+            return;
+        }
 
-        msgHandler.handleMsg(respondMsg);
+        auto connectionStatusMsg = msgHandler.handleMsg(respondMsg);
+        spdlog::info("EngineServer::MsgHandler obj address: {}", static_cast<void*>(&connectionStatusMsg));
 
-        // auto user = std::make_shared<User::User>();
-        // auto session = std::make_shared<Session::Session>(std::move(socket));
+        if(connectionStatusMsg.getType() != Message::MsgType::NOTIFICATION)
+        {
+            spdlog::error("EngineServer: Expected NOTIFICATION message, but received different message {}", connectionStatusMsg.getSerializedMsg());
+            return;
+        }
 
+        if (connectionStatusMsg.getContent() == "false")
+        {
+            spdlog::error("EngineServer: Connection failed");
+            return;
+        }
+
+        spdlog::info("EngineServer: Connection successful");
+
+        Message::MsgConnect clientMsg = Message::MsgConnect(respondMsg.getSerializedMsg(), true);
+        auto username = clientMsg.name;
+        auto user = std::make_shared<User::User>(username);
+        //auto session = std::make_shared<Session::Session>(std::move(socket));
+        // For the future all action handling should be done by msgHandler and here only messages should be sent and received
         mtx.lock();
-        // users.push_back(user);
+        users.push_back(user);
         // sessions.push_back(session);
         mtx.unlock();
+
+        // TODO: send message to client to open dialog for choosing existing game or creating new game
 
         // session->start();
 

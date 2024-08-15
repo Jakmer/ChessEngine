@@ -579,10 +579,11 @@ namespace Message
     }
 
     // MsgNotification class implementation
-    MsgNotification::MsgNotification(const std::string &notification)
+    MsgNotification::MsgNotification(const std::string &notification, const std::string &content)
     {
         this->type = std::to_string(static_cast<int>(MsgType::NOTIFICATION));
         this->notification = notification;
+        this->content = content;
     }
 
     MsgNotification::MsgNotification(const std::string &serializedString, bool deserialize)

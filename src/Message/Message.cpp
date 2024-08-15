@@ -27,4 +27,9 @@ namespace Message
     {
         return msg->content.empty();    // TODO: improve this
     }
+
+    std::string Message::getContent() const
+    {
+        return msg->content;
+    }
 }

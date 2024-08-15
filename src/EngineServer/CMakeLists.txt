@@ -20,5 +20,10 @@ target_include_directories(EngineServer PUBLIC
 # link libraries
 target_link_libraries(EngineServer PUBLIC Session Message)
 
+# Add debug flags if ENABLE_DEBUG is ON
+if(ENABLE_DEBUG)
+    target_compile_options(EngineServer PRIVATE -g)
+endif()
+
 # Install library
 install(TARGETS EngineServer DESTINATION lib)

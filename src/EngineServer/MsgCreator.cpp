@@ -60,9 +60,9 @@ namespace EngineServer
         return std::make_shared<Message::MsgPong>();
     }
 
-    std::shared_ptr<Message::MsgNotification> MsgCreator::msgNotification(const std::string &notification)
+    std::shared_ptr<Message::MsgNotification> MsgCreator::msgNotification(const std::string &notification, const std::string &content)
     {
-        return std::make_shared<Message::MsgNotification>(notification);
+        return std::make_shared<Message::MsgNotification>(notification, content);
     }
 
     std::shared_ptr<Message::MsgCommand> MsgCreator::msgCommand(const std::string &command)

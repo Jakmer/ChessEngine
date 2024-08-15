@@ -46,7 +46,7 @@ namespace Client
             std::string serializedMsg;
             std::getline(input, serializedMsg);
             spdlog::info("Client: Received message from server: {}", serializedMsg);
-            // TODO: here is the problem because the first string must be the message type to know which message to create
+            // TODO: here is the problem because the first string must be the message type to know which message to create so implement this like server::msgHandler
             std::shared_ptr<Message::MsgInfoIfc> msgInfo = std::make_shared<Message::MsgConnect>(serializedMsg, true);
             Message::Message msg(msgInfo, Message::MsgType::CONNECT);
 

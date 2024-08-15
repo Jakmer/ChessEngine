@@ -14,47 +14,46 @@ namespace EngineServer
 
     Message::Message MsgHandler::handleMsg(Message::Message &msg)
     {
-        spdlog::info("Handling message");
-        proccesMessage(msg);
-        return msg;
+        spdlog::info("EngineServer::MsgHandler Handling message");
+        return proccesMessage(msg);
     }
 
     Message::Message MsgHandler::returnCorrectMessageType(std::string &serializedMsg)
     {
-        spdlog::info("Returning correct message type");
-        
+        spdlog::info("EngineServer::MsgHandler Returning correct message type");
+
         std::string delimiter = ";";
         std::string typeStr = serializedMsg.substr(0, serializedMsg.find(delimiter));
         int type = std::stoi(typeStr);
 
-        switch(type)
+        switch (type)
         {
-            case 0:
-                return Message::Message(std::make_shared<Message::MsgConnect>(serializedMsg, true), Message::MsgType::CONNECT);
-            case 1:
-                return Message::Message(std::make_shared<Message::MsgLogin>(serializedMsg, true), Message::MsgType::LOGIN);
-            case 2:
-                return Message::Message(std::make_shared<Message::MsgGameAction>(serializedMsg, true), Message::MsgType::GAMEACTION);
-            case 3:
-                return Message::Message(std::make_shared<Message::MsgError>(serializedMsg, true), Message::MsgType::ERROR);
-            case 4:
-                return Message::Message(std::make_shared<Message::MsgDisconnect>(serializedMsg, true), Message::MsgType::DISCONNECT);
-            case 5:
-                return Message::Message(std::make_shared<Message::MsgAuth>(serializedMsg, true), Message::MsgType::AUTH);
-            case 6:
-                return Message::Message(std::make_shared<Message::MsgChat>(serializedMsg, true), Message::MsgType::CHAT);
-            case 7:
-                return Message::Message(std::make_shared<Message::MsgGameStateUpdate>(serializedMsg, true), Message::MsgType::GAMESTATEUPDATE);
-            case 8:
-                return Message::Message(std::make_shared<Message::MsgPing>(serializedMsg, true), Message::MsgType::PING);
-            case 9:
-                return Message::Message(std::make_shared<Message::MsgPong>(serializedMsg, true), Message::MsgType::PONG);
-            case 10:
-                return Message::Message(std::make_shared<Message::MsgNotification>(serializedMsg, true), Message::MsgType::NOTIFICATION);
-            case 11:
-                return Message::Message(std::make_shared<Message::MsgCommand>(serializedMsg, true), Message::MsgType::COMMAND);
-            default:
-                throw std::invalid_argument("Unknown message type");
+        case 0:
+            return Message::Message(std::make_shared<Message::MsgConnect>(serializedMsg, true), Message::MsgType::CONNECT);
+        case 1:
+            return Message::Message(std::make_shared<Message::MsgLogin>(serializedMsg, true), Message::MsgType::LOGIN);
+        case 2:
+            return Message::Message(std::make_shared<Message::MsgGameAction>(serializedMsg, true), Message::MsgType::GAMEACTION);
+        case 3:
+            return Message::Message(std::make_shared<Message::MsgError>(serializedMsg, true), Message::MsgType::ERROR);
+        case 4:
+            return Message::Message(std::make_shared<Message::MsgDisconnect>(serializedMsg, true), Message::MsgType::DISCONNECT);
+        case 5:
+            return Message::Message(std::make_shared<Message::MsgAuth>(serializedMsg, true), Message::MsgType::AUTH);
+        case 6:
+            return Message::Message(std::make_shared<Message::MsgChat>(serializedMsg, true), Message::MsgType::CHAT);
+        case 7:
+            return Message::Message(std::make_shared<Message::MsgGameStateUpdate>(serializedMsg, true), Message::MsgType::GAMESTATEUPDATE);
+        case 8:
+            return Message::Message(std::make_shared<Message::MsgPing>(serializedMsg, true), Message::MsgType::PING);
+        case 9:
+            return Message::Message(std::make_shared<Message::MsgPong>(serializedMsg, true), Message::MsgType::PONG);
+        case 10:
+            return Message::Message(std::make_shared<Message::MsgNotification>(serializedMsg, true), Message::MsgType::NOTIFICATION);
+        case 11:
+            return Message::Message(std::make_shared<Message::MsgCommand>(serializedMsg, true), Message::MsgType::COMMAND);
+        default:
+            throw std::invalid_argument("EngineServer::MsgHandler Unknown message type");
         }
     }
 
@@ -113,7 +112,7 @@ namespace EngineServer
             break;
 
         default:
-            spdlog::error("Unknown message type");
+            spdlog::error("EngineServer::MsgHandler Unknown message type");
             std::string errorMessage = "Unknown message type";
             auto errorMsg = msgCreator.msgError(errorMessage);
             respondMsg = Message::Message(errorMsg, Message::MsgType::ERROR);
@@ -125,28 +124,35 @@ namespace EngineServer
 
     Message::Message MsgHandler::handleConnect(Message::Message &msg)
     {
-        spdlog::info("Handling connect message");
+        spdlog::info("EngineServer::MsgHandler Handling connect message");
         // TODO: implement part of logic here
         // For example check whether the client msg is valid as client hello etc.
         // we can also return msgCreator.msgError() or msgCreator.msgGameAction() if need to start the game immediately
 
-        // dynamic cast to resolve polymorphism
-        auto clientMsg = Message::MsgConnect(msg.getSerializedMsg());
+        auto clientMsg = Message::MsgConnect(msg.getSerializedMsg(), true);
 
-        // now we can access the fields of MsgConnect
-        spdlog::info("Client name: {}", clientMsg.name);
+        spdlog::info("EngineServer::MsgHandler Client name: {}", clientMsg.name);
 
-        // logic here
-        std::string name = "Wrochess"; // TODO: add and replace server name
-        
-        auto respondMsg = msgCreator.msgConnect(name);
+        std::string username = clientMsg.name;
+        std::string content = clientMsg.content;
 
-        return Message::Message(respondMsg, Message::MsgType::CONNECT);
+        if (!username.empty() && content == "Hello from " + username)
+        {
+            // notif that connection is successful. notif is for server only
+            spdlog::info("EngineServer::MsgHandler Client hello received");
+            auto respond = Message::Message(msgCreator.msgNotification("Connection successful", "true"), Message::MsgType::NOTIFICATION);
+            spdlog::info("EngineServer::MsgHandler Responding with: {}", respond.getSerializedMsg());
+            spdlog::info("EngineServer::MsgHandler obj address: {}", static_cast<void*>(&respond));
+            return respond;            
+        }
+
+        spdlog::error("EngineServer::MsgHandler Connection failed: No client hello");
+        return Message::Message(msgCreator.msgNotification("Connection failed: No client hello", "false"), Message::MsgType::NOTIFICATION);
     }
 
     Message::Message MsgHandler::handleLogin(Message::Message &msg)
     {
-        spdlog::info("Handling login message");
+        spdlog::info("EngineServer::MsgHandler Handling login message");
         // TODO: implement part of logic here
         std::string username = "";
         auto respondMsg = msgCreator.msgLogin(username);
@@ -155,7 +161,7 @@ namespace EngineServer
 
     Message::Message MsgHandler::handleGameAction(Message::Message &msg)
     {
-        spdlog::info("Handling game action message");
+        spdlog::info("EngineServer::MsgHandler Handling game action message");
         // TODO: implement part of logic here
         std::string action = "";
         auto respondMsg = msgCreator.msgGameAction(action);
@@ -164,7 +170,7 @@ namespace EngineServer
 
     Message::Message MsgHandler::handleError(Message::Message &msg)
     {
-        spdlog::info("Handling error message");
+        spdlog::info("EngineServer::MsgHandler Handling error message");
         // TODO: implement part of logic here
         std::string errorMessage = "";
         auto respondMsg = msgCreator.msgError(errorMessage);
@@ -173,7 +179,7 @@ namespace EngineServer
 
     Message::Message MsgHandler::handleDisconnect(Message::Message &msg)
     {
-        spdlog::info("Handling disconnect message");
+        spdlog::info("EngineServer::MsgHandler Handling disconnect message");
         // TODO: implement part of logic here
         std::string reason = "";
         auto respondMsg = msgCreator.msgDisconnect(reason);
@@ -182,7 +188,7 @@ namespace EngineServer
 
     Message::Message MsgHandler::handleAuth(Message::Message &msg)
     {
-        spdlog::info("Handling auth message");
+        spdlog::info("EngineServer::MsgHandler Handling auth message");
         // TODO: implement part of logic here
         std::string token = "";
         auto respondMsg = msgCreator.msgAuth(token);
@@ -191,7 +197,7 @@ namespace EngineServer
 
     Message::Message MsgHandler::handleChat(Message::Message &msg)
     {
-        spdlog::info("Handling chat message");
+        spdlog::info("EngineServer::MsgHandler Handling chat message");
         // TODO: implement part of logic here
         std::string message = "";
         auto respondMsg = msgCreator.msgChat(message);
@@ -200,7 +206,7 @@ namespace EngineServer
 
     Message::Message MsgHandler::handleGameStateUpdate(Message::Message &msg)
     {
-        spdlog::info("Handling game state update message");
+        spdlog::info("EngineServer::MsgHandler Handling game state update message");
         // TODO: implement part of logic here
         std::string state = "";
         auto respondMsg = msgCreator.msgGameStateUpdate(state);
@@ -209,14 +215,14 @@ namespace EngineServer
 
     Message::Message MsgHandler::handlePing(Message::Message &msg)
     {
-        spdlog::info("Handling ping message");
+        spdlog::info("EngineServer::MsgHandler Handling ping message");
         auto respondMsg = msgCreator.msgPong();
         return Message::Message(respondMsg, Message::MsgType::PONG);
     }
 
     Message::Message MsgHandler::handlePong(Message::Message &msg)
     {
-        spdlog::info("Handling pong message");
+        spdlog::info("EngineServer::MsgHandler Handling pong message");
         // TODO: implement part of logic here
         auto respondMsg = msgCreator.msgPing();
         return Message::Message(respondMsg, Message::MsgType::PING);
@@ -224,16 +230,16 @@ namespace EngineServer
 
     Message::Message MsgHandler::handleNotification(Message::Message &msg)
     {
-        spdlog::info("Handling notification message");
+        spdlog::info("EngineServer::MsgHandler Handling notification message");
         // TODO: implement part of logic here
         std::string notification = "";
-        auto respondMsg = msgCreator.msgNotification(notification);
+        auto respondMsg = msgCreator.msgNotification(notification, "");
         return Message::Message(respondMsg, Message::MsgType::NOTIFICATION);
     }
 
     Message::Message MsgHandler::handleCommand(Message::Message &msg)
     {
-        spdlog::info("Handling command message");
+        spdlog::info("EngineServer::MsgHandler Handling command message");
         // TODO: implement part of logic here
         std::string command = "";
         auto respondMsg = msgCreator.msgCommand(command);

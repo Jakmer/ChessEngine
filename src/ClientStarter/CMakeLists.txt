@@ -11,5 +11,10 @@ target_link_libraries(ClientStarter PRIVATE Client)
 # Include EngineServer headers
 target_include_directories(ClientStarter PRIVATE ../Client)
 
+# Add debug flags if ENABLE_DEBUG is ON
+if(ENABLE_DEBUG)
+    target_compile_options(ClientStarter PRIVATE -g)
+endif()
+
 # Install executable
 install(TARGETS ClientStarter DESTINATION bin)

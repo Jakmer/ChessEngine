@@ -18,7 +18,7 @@ namespace Session
     class Session
     {
     public:
-        Session(boost::asio::ip::tcp::socket &&socket);
+        Session(boost::asio::ip::tcp::socket &&socket, User::User &user);
         ~Session();
 
         void start();

@@ -10,5 +10,10 @@ target_include_directories(Client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(Client PUBLIC Message)
 
+# Add debug flags if ENABLE_DEBUG is ON
+if(ENABLE_DEBUG)
+    target_compile_options(Client PRIVATE -g)
+endif()
+
 # Install library
 install(TARGETS Client DESTINATION lib)

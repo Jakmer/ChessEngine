@@ -44,3 +44,13 @@ TEST_F(MessageTest, EmptyMessage)
 
     EXPECT_FALSE(msg.empty());
 }
+
+
+TEST_F(MessageTest, GetContent)
+{
+    std::string name = "Dummy";
+    std::shared_ptr<Message::MsgConnect> msgConnect = std::make_shared<Message::MsgConnect>(name);
+    Message::Message msg(msgConnect, Message::MsgType::CONNECT);
+
+    EXPECT_EQ(msg.getContent(), "Hello from "+name);
+}

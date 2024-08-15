@@ -138,7 +138,7 @@ namespace Message
     class MsgNotification : public MsgInfoIfc
     {
     public:
-        MsgNotification(const std::string &notification);
+        MsgNotification(const std::string &notification, const std::string &content);
         MsgNotification(const std::string &serializedString, bool deserialize);
         ~MsgNotification();
 

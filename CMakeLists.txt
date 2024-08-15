@@ -21,6 +21,13 @@ set(CMAKE_GENERATOR "Ninja")
 # install destination
 set(CMAKE_INSTALL_PREFIX /usr/local)
 
+# Define the debug flag
+option(ENABLE_DEBUG "Enable debug mode" ON)
+
+if(ENABLE_DEBUG)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+endif()
+
 # Add src subdirectories
 add_subdirectory(src/EngineStarter)
 add_subdirectory(src/EngineServer)

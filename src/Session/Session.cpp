@@ -4,7 +4,7 @@
 
 namespace Session
 {
-    Session::Session(boost::asio::ip::tcp::socket &&socket) : socket(std::move(socket)), isActive_(true)
+    Session::Session(boost::asio::ip::tcp::socket &&socket, User::User &user) : socket(std::move(socket)), isActive_(true), user(user)
     {
         try
         {

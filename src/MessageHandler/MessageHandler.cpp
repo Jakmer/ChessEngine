@@ -2,7 +2,7 @@
 
 namespace MessageHandler
 {
-    MessageHandler::MessageHandler()
+    MessageHandler::MessageHandler()    // TODO: Refactor: consider moving both client and server message handlers here but first create MessageHandler ifc
     {
     }
 

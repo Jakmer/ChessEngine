@@ -3,6 +3,8 @@ project(ChessEngineTests)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
+
 enable_testing()
 
 find_package(GTest REQUIRED)
@@ -22,6 +24,7 @@ target_include_directories(ChessEngineTests PRIVATE
 
 target_sources(ChessEngineTests PRIVATE
 	EngineServerTest/EngineServerTest.cpp
+	EngineServerTest/MsgHandlerTest.cpp
 	ClientTest/ClientTest.cpp
 	Game/GameTest.cpp
 	Message/MessageTest.cpp
