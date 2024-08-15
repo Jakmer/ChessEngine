@@ -26,14 +26,8 @@ int main(int argc, char *argv[])
         Client::Client client(host, port);
 
         client.connect();
+        client.start();
 
-        client.receiveMessage();
-
-        std::string name = "Client";
-        std::shared_ptr<Message::MsgInfoIfc> msgInfo = std::make_shared<Message::MsgConnect>(name);
-        Message::Message msg(msgInfo, Message::MsgType::CONNECT);
-
-        client.sendMessage(msg);
     }
     catch (const std::exception &e)
     {

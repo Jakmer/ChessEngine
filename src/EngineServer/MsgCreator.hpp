@@ -23,7 +23,7 @@ namespace EngineServer
         std::shared_ptr<Message::MsgGameStateUpdate> msgGameStateUpdate(const std::string &state);
         std::shared_ptr<Message::MsgPing> msgPing();
         std::shared_ptr<Message::MsgPong> msgPong();
-        std::shared_ptr<Message::MsgNotification> msgNotification(const std::string &notification, const std::string &details);
+        std::shared_ptr<Message::MsgNotification> msgNotification(const std::string &notification, const std::string &contetn);
         std::shared_ptr<Message::MsgCommand> msgCommand(const std::string &command);
     };
 }

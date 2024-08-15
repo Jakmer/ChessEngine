@@ -12,7 +12,8 @@ namespace EngineServer
                                                                                  users(),
                                                                                  sessions(),
                                                                                  connections(),
-                                                                                 mtx()
+                                                                                 mtx(),
+                                                                                 serverName("Wrochess")
     {
         if (port < 0)
         {
@@ -64,53 +65,65 @@ namespace EngineServer
         spdlog::info("EngineServer: EngineServer stopped accepting connections");
     }
 
+    bool EngineServer::validateConnection(const Message::Message &msg)
+    {
+        return msg.getType() == Message::MsgType::NOTIFICATION && msg.getContent() == "true";
+    }
+
     void EngineServer::handleConnection(boost::asio::ip::tcp::socket socket)
     {
         spdlog::info("EngineServer: Connection accepted");
 
+        bool isRunning = true;
         MsgCreator msgCreator;
-        MsgHandler msgHandler;
-        std::string name = "Wrochess";
-        auto connectMsgInfo = msgCreator.msgConnect(name);
-        auto connectMsg = Message::Message(connectMsgInfo, Message::MsgType::CONNECT);
-        spdlog::info("EngineServer: Sending connection message to client {}", connectMsg.getSerializedMsg());
-        sendMessage(connectMsg, socket);
+        MsgHandler msgHandler(isRunning);
 
         // TODO: implement timeout for receiving message
 
-        auto respondMsg = receiveMessage(socket);
-        if(respondMsg.getType() != Message::MsgType::CONNECT)
+        auto clientHelloMsg = receiveMessage(socket);
+        if(clientHelloMsg.getType() != Message::MsgType::CONNECT)
         {
             spdlog::error("EngineServer: Expected CONNECT message, but received different message");
+            auto respond = Message::Message(msgCreator.msgError("No client hello"), Message::MsgType::ERROR);
+            sendMessage(respond, socket);
             return;
         }
 
-        auto connectionStatusMsg = msgHandler.handleMsg(respondMsg);
-        spdlog::info("EngineServer::MsgHandler obj address: {}", static_cast<void*>(&connectionStatusMsg));
-
-        if(connectionStatusMsg.getType() != Message::MsgType::NOTIFICATION)
+        auto clientHelloValidation = msgHandler.handleMsg(clientHelloMsg);
+        if (!validateConnection(clientHelloValidation))
         {
-            spdlog::error("EngineServer: Expected NOTIFICATION message, but received different message {}", connectionStatusMsg.getSerializedMsg());
+            spdlog::error("EngineServer: Connection failed: No client hello");
+            auto respond = Message::Message(msgCreator.msgError("No client hello"), Message::MsgType::ERROR);
+            sendMessage(respond, socket);
             return;
         }
 
-        if (connectionStatusMsg.getContent() == "false")
-        {
-            spdlog::error("EngineServer: Connection failed");
-            return;
-        }
-
+        auto connectMsgInfo = msgCreator.msgConnect(serverName);
+        auto connectMsg = Message::Message(connectMsgInfo, Message::MsgType::CONNECT);
+        sendMessage(connectMsg, socket);
         spdlog::info("EngineServer: Connection successful");
 
-        Message::MsgConnect clientMsg = Message::MsgConnect(respondMsg.getSerializedMsg(), true);
+        Message::MsgConnect clientMsg = Message::MsgConnect(clientHelloMsg.getSerializedMsg(), true);
         auto username = clientMsg.name;
         auto user = std::make_shared<User::User>(username);
+
+        while(isRunning)
+        {
+            auto msg = receiveMessage(socket);
+            auto response = msgHandler.handleMsg(msg);
+            break;
+            sendMessage(response, socket);
+            // consider makeing msgHandler as friend class so it can access private members
+        }
+
         //auto session = std::make_shared<Session::Session>(std::move(socket));
         // For the future all action handling should be done by msgHandler and here only messages should be sent and received
         mtx.lock();
         users.push_back(user);
         // sessions.push_back(session);
         mtx.unlock();
+
+
 
         // TODO: send message to client to open dialog for choosing existing game or creating new game
 

@@ -8,6 +8,7 @@
 #include "EngineServer.hpp"
 #include "MsgTypes.hpp"
 #include <memory>
+#include "Message.hpp"
 
 class EngineServerTest : public ::testing::Test
 {
@@ -93,11 +94,14 @@ TEST_F(EngineServerTest, SendMessage)
 
     client.connect();
 
+    std::shared_ptr<Message::MsgInfoIfc> msg = std::make_shared<Message::MsgConnect>("Client");
+    auto message = Message::Message(msg, Message::MsgType::CONNECT);
+    client.sendMessage(message);
     auto recvMsg = client.receiveMessage();
-    auto msg = std::make_shared<Message::MsgConnect>(recvMsg.getSerializedMsg(), true);
+    auto recvMessage = std::make_shared<Message::MsgConnect>(recvMsg.getSerializedMsg(), true);
 
-    EXPECT_EQ("Hello from Wrochess", msg->content);
-    
+    EXPECT_EQ("Hello from Wrochess", recvMessage->content);
+    EXPECT_EQ("Wrochess", recvMessage->name);
 }
 
 TEST_F(EngineServerTest, SetClientLimit)

@@ -26,6 +26,7 @@ namespace EngineServer
         Message::Message receiveMessage(boost::asio::ip::tcp::socket &socket);
         void setClientLimit(int limit);
         int getClientLimit();
+        bool validateConnection(const Message::Message &msg);
         static bool isRunning();
 
     private:
@@ -39,6 +40,7 @@ namespace EngineServer
         std::vector<std::shared_ptr<Session::Session>> sessions;
         std::vector<std::thread> connections;
         std::mutex mtx;
+        std::string serverName;
 
 
         void handleConnection(boost::asio::ip::tcp::socket socket);

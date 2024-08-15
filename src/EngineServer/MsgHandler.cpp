@@ -4,7 +4,7 @@
 
 namespace EngineServer
 {
-    MsgHandler::MsgHandler()
+    MsgHandler::MsgHandler(bool &isRunning): isRunning(isRunning)
     {
     }
 
@@ -141,8 +141,6 @@ namespace EngineServer
             // notif that connection is successful. notif is for server only
             spdlog::info("EngineServer::MsgHandler Client hello received");
             auto respond = Message::Message(msgCreator.msgNotification("Connection successful", "true"), Message::MsgType::NOTIFICATION);
-            spdlog::info("EngineServer::MsgHandler Responding with: {}", respond.getSerializedMsg());
-            spdlog::info("EngineServer::MsgHandler obj address: {}", static_cast<void*>(&respond));
             return respond;            
         }
 
@@ -232,6 +230,8 @@ namespace EngineServer
     {
         spdlog::info("EngineServer::MsgHandler Handling notification message");
         // TODO: implement part of logic here
+        // for recv loop stop
+        isRunning = false;
         std::string notification = "";
         auto respondMsg = msgCreator.msgNotification(notification, "");
         return Message::Message(respondMsg, Message::MsgType::NOTIFICATION);

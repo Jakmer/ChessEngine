@@ -4,14 +4,14 @@ namespace Client
 {
 
     Client::Client(const std::string &host, const std::string &port)
-        : resolver_(io_context_), socket_(io_context_), host_(host), port_(port), isConnected_(false), msgQueue()
+        : resolver_(io_context_), socket_(io_context_), host_(host), port_(port), isConnected_(false), msgQueue(), windowManager_(), msgHandler_()
     {
         spdlog::info("Client: Client object created");
     }
 
     Client::~Client()
     {
-        if(isConnected_)
+        if (isConnected_)
         {
             disconnect();
         }
@@ -79,7 +79,7 @@ namespace Client
             std::string str = msg.getSerializedMsg();
             std::string lastEightChars = str.substr(str.size() - 8);
 
-            if(lastEightChars != Message::TERMINATOR)
+            if (lastEightChars != Message::TERMINATOR)
             {
                 spdlog::error("Client: Message does not have a terminator at the end");
                 throw std::invalid_argument("Message does not have a terminator at the end");
@@ -105,6 +105,55 @@ namespace Client
         {
             spdlog::error("Client: Exception during disconnect: {}", e.what());
         }
+    }
+
+    bool Client::validateConnection(const Message::Message &msg)
+    {
+        if (msg.getType() == Message::MsgType::CONNECT)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    void Client::start()
+    {
+        // send client hello
+        std::string name = "Client";
+        std::shared_ptr<Message::MsgInfoIfc> msgInfo = std::make_shared<Message::MsgConnect>(name);
+        Message::Message msg(msgInfo, Message::MsgType::CONNECT);
+
+        sendMessage(msg);
+        auto response = receiveMessage();
+        msgQueue.push(response);
+        bool isRunning = true;
+
+        if (validateConnection(response))
+        {
+            spdlog::info("Client: Connection successful");
+        }
+        else
+        {
+            // TODO: handle this case
+            isRunning = false;
+            spdlog::error("Client: Connection failed");
+        }
+
+        // If connection is successful, open dialog for choosing existing game or creating new game
+        int dialogChoice = windowManager_.showDialogAndAwaitResponse();
+        auto msgInfoDialog = std::make_shared<Message::MsgNotification>("Dialog choice", std::to_string(dialogChoice));
+        Message::Message clientMsg(msgInfoDialog, Message::MsgType::NOTIFICATION);
+
+        while (isRunning)
+        {
+            sendMessage(clientMsg);
+            break;
+            auto response = receiveMessage();
+            msgQueue.push(response);
+            clientMsg = msgHandler_.handleMsg(response);
+        }
+
+        spdlog::info("Client: Connection closed");
     }
 
 }

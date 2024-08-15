@@ -5,12 +5,14 @@
 class MsgHandlerUnderTest : public EngineServer::MsgHandler
 {
 public:
-    MsgHandlerUnderTest() : EngineServer::MsgHandler() {}
+    MsgHandlerUnderTest() : EngineServer::MsgHandler(isRunning) {}
     // Public wrapper for the protected handleConnect method
     Message::Message handleConnectPublic(Message::Message &msg)
     {
         return handleConnect(msg);
     }
+private:
+    bool isRunning = true;
 };
 
 class MsgHandlerTest : public ::testing::Test

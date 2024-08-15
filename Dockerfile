@@ -6,7 +6,9 @@ RUN apt-get update &&  apt-get upgrade -y && apt-get install -y \
 	build-essential \
 	libboost-all-dev \
 	ccache \
-	ninja-build 
+	ninja-build \
+    gdb \
+    expect 
 
 # Install googletest
 WORKDIR /usr/src/googletest

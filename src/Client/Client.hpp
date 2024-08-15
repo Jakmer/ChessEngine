@@ -5,6 +5,8 @@
 #include <string>
 #include <spdlog/spdlog.h>
 #include "Message.hpp"
+#include "WindowManager.hpp"
+#include "MsgHandler.hpp"
 
 #include <queue>
 
@@ -24,7 +26,8 @@ namespace Client
         Message::Message receiveMessage();
         Message::Message lastReceivedMessage();
         bool isConnected();
-        
+        void start();
+        bool validateConnection(const Message::Message &msg);
 
     private:
         boost::asio::io_context io_context_;
@@ -33,8 +36,11 @@ namespace Client
         std::string host_;
         std::string port_;
         bool isConnected_;
-
+        WindowManager::WindowManager windowManager_;
+        MsgHandler msgHandler_;
         std::queue<Message::Message> msgQueue;
+
+        friend class MsgHandler;
     };
 }
 

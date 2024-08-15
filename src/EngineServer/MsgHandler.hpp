@@ -10,7 +10,7 @@ namespace EngineServer
     class MsgHandler
     {
     public:
-        MsgHandler();
+        MsgHandler(bool &isRunning);
         ~MsgHandler();
 
         Message::Message handleMsg(Message::Message &msg);
@@ -33,6 +33,7 @@ namespace EngineServer
         Message::Message handleCommand(Message::Message &msg);
 
         EngineServer::MsgCreator msgCreator;
+        bool &isRunning;
     };
 }
 

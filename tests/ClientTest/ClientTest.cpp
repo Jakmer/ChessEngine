@@ -48,10 +48,15 @@ TEST_F(ClientTest, ConnectAndReceiveMessage)
 
     client.connect();
 
+    std::shared_ptr<Message::MsgInfoIfc> clientHello = std::make_shared<Message::MsgConnect>("Client");
+    auto msg = Message::Message(clientHello, Message::MsgType::CONNECT);
+    client.sendMessage(msg);
     auto recvMsg = client.receiveMessage();
-    auto msg = std::make_shared<Message::MsgConnect>(recvMsg.getSerializedMsg(), true);
+    std::shared_ptr<Message::MsgConnect> msgConnect = std::make_shared<Message::MsgConnect>(recvMsg.getSerializedMsg(), true);
 
-    EXPECT_EQ("Hello from Wrochess", msg->content);
+    EXPECT_EQ("Hello from Wrochess", msgConnect->content);
+    EXPECT_EQ(Message::MsgType::CONNECT, msg.getType());
+    EXPECT_EQ("Wrochess", msgConnect->name);
 }
 
 TEST_F(ClientTest, ConnectToNonExistentHost)

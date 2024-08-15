@@ -38,6 +38,7 @@ add_subdirectory(src/Message)
 add_subdirectory(src/MessageHandler)
 add_subdirectory(src/Game)
 add_subdirectory(src/User)
+add_subdirectory(src/WindowManager)
 
 # Add tests subdirectories
 add_subdirectory(tests)
