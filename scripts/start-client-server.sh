@@ -3,7 +3,7 @@
 # Run server in the background
 EngineStarter &
 
-sleep 5
+sleep 2
 
 # Create an expect script to automate the input
 expect <<EOF

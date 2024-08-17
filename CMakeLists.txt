@@ -42,3 +42,6 @@ add_subdirectory(src/WindowManager)
 
 # Add tests subdirectories
 add_subdirectory(tests)
+
+# Add scripts subdirectory
+add_subdirectory(scripts)

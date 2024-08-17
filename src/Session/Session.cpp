@@ -1,10 +1,13 @@
 #include "Session.hpp"
 #include "MsgInfoIfc.hpp"
 
-
 namespace Session
 {
-    Session::Session(boost::asio::ip::tcp::socket &&socket, User::User &user) : socket(std::move(socket)), isActive_(true), user(user)
+    Session::Session(boost::asio::ip::tcp::socket &&socket, User::User &user)
+        : socket(std::move(socket)),
+          user(user),
+          isActive_(true)
+
     {
         try
         {
@@ -56,13 +59,13 @@ namespace Session
         try
         {
             boost::asio::streambuf receive_buffer;
-            boost::asio::read_until(socket, receive_buffer, '\n'); 
+            boost::asio::read_until(socket, receive_buffer, '\n');
 
             std::istream input(&receive_buffer);
             std::string message;
             std::getline(input, message);
             auto msgInfo = std::make_shared<Message::MsgConnect>(message);
-            auto msg = Message::Message(msgInfo, Message::MsgType::CONNECT);        // chenge connect
+            auto msg = Message::Message(msgInfo, Message::MsgType::CONNECT); // chenge connect
 
             spdlog::info("Session: Received message from client");
 
@@ -78,7 +81,7 @@ namespace Session
 
     void Session::writeMessage(const Message::Message &msg)
     {
-        if(msg.empty())
+        if (msg.empty())
         {
             spdlog::error("Session: Empty message");
             throw std::invalid_argument("Empty message");
@@ -100,7 +103,6 @@ namespace Session
         {
             spdlog::info("Session: Session stopped");
             isActive_ = false;
-
         }
         catch (const std::exception &e)
         {

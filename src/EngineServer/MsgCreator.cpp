@@ -2,7 +2,7 @@
 
 namespace EngineServer
 {
-    MsgCreator::MsgCreator()
+    MsgCreator::MsgCreator()    // TODO: consider if this class is necessary
     {
     }
 

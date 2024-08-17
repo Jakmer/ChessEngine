@@ -31,7 +31,7 @@ TEST_F(UserTest, GetUserID)
     User::User user("testuser");
     std::string userID = user.getUserID();
     EXPECT_FALSE(userID.empty());
-    EXPECT_EQ(userID.length(), 36); // UUID ma długość 36 znaków
+    EXPECT_EQ(userID.length(), 36);
 }
 
 TEST_F(UserTest, UniqueUserID)

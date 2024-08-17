@@ -6,7 +6,7 @@
 int main()
 {
 
-	spdlog::set_level(spdlog::level::info);
+	spdlog::set_level(spdlog::level::off);
 	spdlog::info("EngineStarter: Engine initialization ...");
 
 	boost::asio::io_context ioContext;
@@ -25,6 +25,12 @@ int main()
 	{
 		spdlog::error("EngineStarter exception: {}", e.what());
 	}
+
+	if (!ioContext.stopped())
+	{
+		ioContext.stop();
+	}
+	spdlog::shutdown();
 
 	return 0;
 }

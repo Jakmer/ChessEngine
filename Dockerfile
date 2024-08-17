@@ -8,7 +8,9 @@ RUN apt-get update &&  apt-get upgrade -y && apt-get install -y \
 	ccache \
 	ninja-build \
     gdb \
-    expect 
+    expect \
+    valgrind \
+    vim
 
 # Install googletest
 WORKDIR /usr/src/googletest
@@ -36,6 +38,8 @@ ENV LD_LIBRARY_PATH=/usr/local/lib
 
 COPY scripts/start-client-server.sh /usr/src/app/scripts/start-client-server.sh
 
-RUN chmod +x /usr/src/app/scripts/start-client-server.sh
+RUN chmod +x /usr/src/app/scripts/start-client-server.sh /usr/src/app/scripts/valgrind_test
+
+
 
 CMD ["/usr/src/app/scripts/start-client-server.sh"]

@@ -65,84 +65,84 @@ namespace Client
         }
     }
 
-    Message::Message MsgHandler::handleConnect(Message::Message &msg)
+    Message::Message MsgHandler::handleConnect(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);
         return Message::Message(msgError, Message::MsgType::ERROR);
     }
 
-    Message::Message MsgHandler::handleLogin(Message::Message &msg)
+    Message::Message MsgHandler::handleLogin(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);
         return Message::Message(msgError, Message::MsgType::ERROR);
     }
 
-    Message::Message MsgHandler::handleGameAction(Message::Message &msg)
+    Message::Message MsgHandler::handleGameAction(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);
         return Message::Message(msgError, Message::MsgType::ERROR);
     }
 
-    Message::Message MsgHandler::handleError(Message::Message &msg)
+    Message::Message MsgHandler::handleError(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);
         return Message::Message(msgError, Message::MsgType::ERROR);
     }
 
-    Message::Message MsgHandler::handleDisconnect(Message::Message &msg)
+    Message::Message MsgHandler::handleDisconnect(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);
         return Message::Message(msgError, Message::MsgType::ERROR);
     }
 
-    Message::Message MsgHandler::handleAuth(Message::Message &msg)
+    Message::Message MsgHandler::handleAuth(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);
         return Message::Message(msgError, Message::MsgType::ERROR);
     }
 
-    Message::Message MsgHandler::handleChat(Message::Message &msg)
+    Message::Message MsgHandler::handleChat(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);
         return Message::Message(msgError, Message::MsgType::ERROR);
     }
 
-    Message::Message MsgHandler::handleGameStateUpdate(Message::Message &msg)
+    Message::Message MsgHandler::handleGameStateUpdate(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);
         return Message::Message(msgError, Message::MsgType::ERROR);
     }
 
-    Message::Message MsgHandler::handlePing(Message::Message &msg)
+    Message::Message MsgHandler::handlePing(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);
         return Message::Message(msgError, Message::MsgType::ERROR);
     }
 
-    Message::Message MsgHandler::handlePong(Message::Message &msg)
+    Message::Message MsgHandler::handlePong(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);
         return Message::Message(msgError, Message::MsgType::ERROR);
     }
 
-    Message::Message MsgHandler::handleNotification(Message::Message &msg)
+    Message::Message MsgHandler::handleNotification(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);
         return Message::Message(msgError, Message::MsgType::ERROR);
     }
 
-    Message::Message MsgHandler::handleCommand(Message::Message &msg)
+    Message::Message MsgHandler::handleCommand(Message::Message /*&msg*/)
     {
         std::string msgErrorReason = "Not implemented";
         std::shared_ptr<Message::MsgInfoIfc> msgError = std::make_shared<Message::MsgError>(msgErrorReason);

@@ -76,12 +76,12 @@ namespace EngineServer
 
         bool isRunning = true;
         MsgCreator msgCreator;
-        MsgHandler msgHandler(isRunning);
+        MsgHandler msgHandler(isRunning, users, sessions, mtx, serverName);
 
         // TODO: implement timeout for receiving message
 
         auto clientHelloMsg = receiveMessage(socket);
-        if(clientHelloMsg.getType() != Message::MsgType::CONNECT)
+        if (clientHelloMsg.getType() != Message::MsgType::CONNECT)
         {
             spdlog::error("EngineServer: Expected CONNECT message, but received different message");
             auto respond = Message::Message(msgCreator.msgError("No client hello"), Message::MsgType::ERROR);
@@ -106,8 +106,9 @@ namespace EngineServer
         Message::MsgConnect clientMsg = Message::MsgConnect(clientHelloMsg.getSerializedMsg(), true);
         auto username = clientMsg.name;
         auto user = std::make_shared<User::User>(username);
+        msgHandler.setUser(user);
 
-        while(isRunning)
+        while (isRunning)
         {
             auto msg = receiveMessage(socket);
             auto response = msgHandler.handleMsg(msg);
@@ -115,20 +116,17 @@ namespace EngineServer
             sendMessage(response, socket);
             // consider makeing msgHandler as friend class so it can access private members
         }
-
-        //auto session = std::make_shared<Session::Session>(std::move(socket));
-        // For the future all action handling should be done by msgHandler and here only messages should be sent and received
-        mtx.lock();
-        users.push_back(user);
+        Stop();
+        // auto session = std::make_shared<Session::Session>(std::move(socket));
+        //  For the future all action handling should be done by msgHandler and here only messages should be sent and received
+        // mtx.lock();
+        // users.push_back(user);
         // sessions.push_back(session);
-        mtx.unlock();
-
-
+        // mtx.unlock();
 
         // TODO: send message to client to open dialog for choosing existing game or creating new game
 
         // session->start();
-
         spdlog::info("EngineServer: Connection closed");
     }
 
@@ -208,6 +206,11 @@ namespace EngineServer
                 spdlog::error("EngineServer: Connection thread not joinable");
             }
         }
+        if (acceptor_.is_open())
+        {
+            acceptor_.close();
+        }
+        io_context_.stop();
     }
 
     int EngineServer::getClientLimit()

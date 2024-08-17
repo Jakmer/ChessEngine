@@ -1,0 +1,65 @@
+#!/bin/bash
+
+echo "Welcome to the Valgrind test script!"
+
+if [ ! -f /usr/src/app/ChessEngineTests ]; then
+    echo "Error: ChessEngineTests executable not found."
+    exit 1
+fi
+
+mkdir -p /usr/src/app/bin
+if [ -d /usr/src/app/bin ]; then
+    echo "Directory 'bin' created."
+else
+    echo "Error: Could not create directory 'bin'."
+    exit 1
+fi
+
+echo "Running tests with Valgrind..."
+
+# Run tests with Valgrind
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=/usr/src/app/bin/valgrind_ChessEngineTests_out.txt /usr/src/app/ChessEngineTests > /usr/src/app/bin/valgrind_ChessEngineTests_stdout.txt 2>&1
+
+echo "Tests completed."
+echo "Running server and client with Valgrind..."
+
+# Run the server with Valgrind in the background
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=/usr/src/app/bin/valgrind_server_out.txt EngineStarter > /usr/src/app/bin/valgrind_server_stdout.txt 2>&1 &
+
+# Wait for the server to start
+sleep 2
+
+# Run the client with Valgrind directly
+echo "1" | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=/usr/src/app/bin/valgrind_client_out.txt ClientStarter > /usr/src/app/bin/valgrind_client_stdout.txt 2>&1
+
+echo "Server and client completed."
+echo "Checking for errors..."
+
+# Check for errors in Valgrind logs
+tests_errors=$(grep "ERROR SUMMARY: [^0]" /usr/src/app/bin/valgrind_ChessEngineTests_out.txt)
+server_errors=$(grep "ERROR SUMMARY: [^0]" /usr/src/app/bin/valgrind_server_out.txt)
+client_errors=$(grep "ERROR SUMMARY: [^0]" /usr/src/app/bin/valgrind_client_out.txt)
+
+
+if [ -n "$server_errors" ] || [ -n "$client_errors" ] || [ -n "$tests_errors" ] ; then
+    echo "Valgrind detected errors."
+    if [ -n "$server_errors" ]; then
+        echo "Server errors:"
+        echo "$server_errors"
+    fi
+    if [ -n "$client_errors" ]; then
+        echo "Client errors:"
+        echo "$client_errors"
+    fi
+    if [ -n "$tests_errors" ]; then
+        echo "Tests errors:"
+        echo "$tests_errors"
+    fi
+
+    echo "Valgrind logs saved in /usr/src/app/bin directory."
+    echo "Exiting with error code 1."
+    exit 1
+else
+    echo "No errors detected by Valgrind."
+    exit 0
+fi

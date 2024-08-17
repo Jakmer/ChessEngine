@@ -11,6 +11,8 @@ add_library(EngineServer SHARED
     MsgCreator.hpp 
     MsgHandler.cpp 
     MsgHandler.hpp
+    ActionHandler.cpp
+    ActionHandler.hpp
 )
 # include directories
 target_include_directories(EngineServer PUBLIC
@@ -18,7 +20,7 @@ target_include_directories(EngineServer PUBLIC
     ${CMAKE_SOURCE_DIR}/src/)
 
 # link libraries
-target_link_libraries(EngineServer PUBLIC Session Message)
+target_link_libraries(EngineServer PUBLIC Session Message User)
 
 # Add debug flags if ENABLE_DEBUG is ON
 if(ENABLE_DEBUG)

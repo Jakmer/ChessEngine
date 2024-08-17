@@ -34,5 +34,7 @@ int main(int argc, char *argv[])
         spdlog::error("ClientStarter: Exception: {}", e.what());
     }
 
+    spdlog::shutdown();
+
     return 0;
 }

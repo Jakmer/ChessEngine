@@ -4,7 +4,13 @@ namespace Client
 {
 
     Client::Client(const std::string &host, const std::string &port)
-        : resolver_(io_context_), socket_(io_context_), host_(host), port_(port), isConnected_(false), msgQueue(), windowManager_(), msgHandler_()
+        : resolver_(io_context_),
+          socket_(io_context_),
+          host_(host), port_(port),
+          isConnected_(false),
+          windowManager_(),
+          msgHandler_(),
+          msgQueue()
     {
         spdlog::info("Client: Client object created");
     }
@@ -141,7 +147,7 @@ namespace Client
 
         // If connection is successful, open dialog for choosing existing game or creating new game
         int dialogChoice = windowManager_.showDialogAndAwaitResponse();
-        auto msgInfoDialog = std::make_shared<Message::MsgNotification>("Dialog choice", std::to_string(dialogChoice));
+        auto msgInfoDialog = std::make_shared<Message::MsgNotification>("Dialog choice 0", std::to_string(dialogChoice));
         Message::Message clientMsg(msgInfoDialog, Message::MsgType::NOTIFICATION);
 
         while (isRunning)

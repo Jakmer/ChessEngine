@@ -9,7 +9,6 @@
 #include "MsgCreator.hpp"
 #include "MsgHandler.hpp"
 #include "MsgTypes.hpp"
-
 #include "User.hpp"
 #include <mutex>
 
@@ -26,7 +25,6 @@ namespace EngineServer
         Message::Message receiveMessage(boost::asio::ip::tcp::socket &socket);
         void setClientLimit(int limit);
         int getClientLimit();
-        bool validateConnection(const Message::Message &msg);
         static bool isRunning();
 
     private:
@@ -44,6 +42,7 @@ namespace EngineServer
 
 
         void handleConnection(boost::asio::ip::tcp::socket socket);
+        bool validateConnection(const Message::Message &msg);
     };
 }
 
